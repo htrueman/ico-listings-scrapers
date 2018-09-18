@@ -75,8 +75,8 @@ class FoundicoSpider(scrapy.Spider):
                 if end_time else None
         }
 
-        links = response.xpath(
-            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract(),
+        links = list(response.xpath(
+            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract()),
 
         for link in links:
             with suppress(IndexError):
