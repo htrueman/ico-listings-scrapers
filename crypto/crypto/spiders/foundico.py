@@ -80,5 +80,6 @@ class FoundicoSpider(scrapy.Spider):
 
         for link in links:
             with suppress(IndexError):
+                print(link)
                 data['https://medium.com/@xaya'.split('https://')[1].split('.')[0]] = link
         yield data
