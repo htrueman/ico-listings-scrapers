@@ -81,5 +81,5 @@ class FoundicoSpider(scrapy.Spider):
         if len(links) > 0:
             for link in links[0]:
                 with suppress(IndexError):
-                    data['https://bitbucket.org/vhevlich/crypto/src/master/'.split('https://')[1].split('/')[0]] = link
+                    data[link.split('https://')[1].split('/')[0]] = link
         yield data
