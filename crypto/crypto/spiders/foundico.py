@@ -1,3 +1,5 @@
+from contextlib import suppress
+
 import scrapy
 
 
@@ -28,7 +30,7 @@ class FoundicoSpider(scrapy.Spider):
         end_time = response.xpath(
                 '//div[@id="ico-end"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
 
-        yield {
+        data = {
             'title': response.xpath('//h1/text()').extract_first(),
             'type': response.xpath(
                 '//tr[./td[contains(., "Type")]]/child::td[3]/text()').extract_first(),
@@ -65,8 +67,6 @@ class FoundicoSpider(scrapy.Spider):
                 '//tr[./td[contains(., "Location")]]/child::td[3]/text()').extract_first(),
             'website': response.xpath(
                 '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first(),
-            'links': response.xpath(
-                '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract(),
             'start_time': start_time[0]
                 + ', ' + response.xpath('//div[@id="ico-start"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
                 if start_time else None,
@@ -74,3 +74,11 @@ class FoundicoSpider(scrapy.Spider):
                 + ', ' + response.xpath('//div[@id="ico-end"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
                 if end_time else None
         }
+
+        links = response.xpath(
+            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract(),
+
+        for link in links:
+            with suppress(IndexError):
+                data['https://medium.com/@xaya'.split('https://')[1].split('.')[0]] = link
+        yield data
