@@ -24,11 +24,11 @@ class FoundicoSpider(scrapy.Spider):
 
     def parse_company_page(self, response):
         token_price = response.xpath(
-                '//tr[./td[contains(., "Token price")]]/child::td[3]/text()').extract_first()
+            '//tr[./td[contains(., "Token price")]]/child::td[3]/text()').extract_first()
         start_time = response.xpath(
-                '//div[@id="ico-start"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
+            '//div[@id="ico-start"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
         end_time = response.xpath(
-                '//div[@id="ico-end"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
+            '//div[@id="ico-end"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
 
         data = {
             'title': response.xpath('//h1/text()').extract_first(),
@@ -68,18 +68,18 @@ class FoundicoSpider(scrapy.Spider):
             'website': response.xpath(
                 '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first(),
             'start_time': start_time[0]
-                + ', ' + response.xpath('//div[@id="ico-start"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
-                if start_time else None,
+                          + ', ' + response.xpath('//div[@id="ico-start"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
+            if start_time else None,
             'end_time': end_time[0]
-                + ', ' + response.xpath('//div[@id="ico-end"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
-                if end_time else None
+                        + ', ' + response.xpath('//div[@id="ico-end"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
+            if end_time else None
         }
 
-        links = list(response.xpath(
-            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract()),
+        links = response.xpath(
+            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract(),
 
-        for link in links:
-            with suppress(IndexError):
-                print(link)
-                data['https://medium.com/@xaya'.split('https://')[1].split('.')[0]] = link
+        if len(links) > 0:
+            for link in links[0]:
+                with suppress(IndexError):
+                    data['https://medium.com/@xaya'.split('https://')[1].split('.')[0]] = link
         yield data
