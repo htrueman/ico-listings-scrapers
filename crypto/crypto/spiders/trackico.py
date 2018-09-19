@@ -1,7 +1,10 @@
+from functools import partial
+
 import scrapy
 
+from ..utils import xpath_tolerant, xpath_exract_first_text, parse_social_link
 
-XPATH_SOCIAL_LINK = '/html/body/main/div/div[1]/div[1]/div/div[2]/div/div/div[1]/div[2]/div[2]/a[@href[contains(., "{}")]]/@href'
+XPATH_SOCIAL_LINK = '/html/body/main/div/div[1]/div[1]/div/div[2]/div/div/div[1]/div[2]/div[2]/a[@href[contains(., "{href_contains}")]]/@href'
 XPATH_BOUNTY_LINK = '/html/body/main/div/div[1]/div[1]/div/div[2]/div/div/div[1]/div[2]/div[2]/a[@href[contains(., "bitcointalk.org")]]/@href'
 XPATH_TITLE = '/html/body/main/div/div[1]/div[1]/div/div[2]/div/div/div[1]/div[2]/div[1]/h1'
 XPATH_RATING = '/html/body/main/div/div[1]/div[2]/div/div[2]/div/div/div/strong'
@@ -23,27 +26,6 @@ XPATH_WHITELIST = '//*[@id="tab-financial"]/div/div[2]/div/div/div/table/tbody/t
 XPATH_BONUS = '//*[@id="tab-financial"]/div/div[2]/div/div/div/table/tbody/tr[./th[contains(., "Bonus")]]/child::td[1]/p/text()'
 
 MAX_PAGE = 163
-
-
-def xpath_tolerant(response, xpath_selector):
-    try:
-        return response.xpath(xpath_selector).extract_first()
-    except AttributeError:
-        return None
-
-
-def xpath_exract_first_text(response, xpath_selector):
-    try:
-        return response.xpath(xpath_selector + '/text()').extract_first().replace('\n', '')
-    except AttributeError:
-        return None
-
-
-def parse_social_link(response, href_contains):
-    try:
-        return response.xpath(XPATH_SOCIAL_LINK.format(href_contains)).extract_first()
-    except AttributeError:
-        return None
 
 
 class TrackicoSpider(scrapy.Spider):
@@ -70,6 +52,8 @@ class TrackicoSpider(scrapy.Spider):
         except Exception:
             bounty_link = None
 
+        parse_social_wrap = partial(parse_social_link, response, XPATH_SOCIAL_LINK)
+
         yield {
             'title': xpath_exract_first_text(response, XPATH_TITLE),
             'rating': xpath_exract_first_text(response, XPATH_RATING),
@@ -77,15 +61,15 @@ class TrackicoSpider(scrapy.Spider):
             'website': xpath_tolerant(response, XPATH_WEBSITE),
             'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
 
-            'bitcointalk_link': parse_social_link(response, "bitcointalk.org"),
-            'telegram_link': parse_social_link(response, "t.me"),
-            'twitter_link': parse_social_link(response, "twitter.com"),
-            'medium_link': parse_social_link(response, "medium.com"),
-            'facebook_link': parse_social_link(response, "facebook.com"),
-            'linkedin_link': parse_social_link(response, "linkedin.com"),
-            'reddit_link': parse_social_link(response, "reddit.com"),
-            'github_link': parse_social_link(response, "github.com"),
-            'instagram_link': parse_social_link(response, "instagram.com"),
+            'bitcointalk_link': parse_social_wrap("bitcointalk.org"),
+            'telegram_link': parse_social_wrap("t.me"),
+            'twitter_link': parse_social_wrap("twitter.com"),
+            'medium_link': parse_social_wrap("medium.com"),
+            'facebook_link': parse_social_wrap("facebook.com"),
+            'linkedin_link': parse_social_wrap("linkedin.com"),
+            'reddit_link': parse_social_wrap("reddit.com"),
+            'github_link': parse_social_wrap("github.com"),
+            'instagram_link': parse_social_wrap("instagram.com"),
 
             'bounty_link': bounty_link,
 
