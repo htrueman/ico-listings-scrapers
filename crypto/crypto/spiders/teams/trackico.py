@@ -29,16 +29,16 @@ class TrackicoSpider(scrapy.Spider):
 
         members_links = response.xpath(XPATH_MEMBER + '/h5/a/@href').extract()[:3]
         members_names = response.xpath(XPATH_MEMBER + '/h5/a/text()').extract()[:3]
-        members_postions = response.xpath(XPATH_MEMBER + '/span[text() != "\n"]/text()').extract()[:3]
+        members_positions = response.xpath(XPATH_MEMBER + '/span[text() != "\n"]/text()').extract()[:3]
 
-        for link, name, position in zip(members_links, members_names, members_postions):
+        for link, name, position in zip(members_links, members_names, members_positions):
             yield response.follow(
                 link,
                 callback=self.parse_member,
                 meta={
                     'ico_title': ico_title,
-                    'member_name': name.replace('\n', '').lower(),
-                    'member_position': position
+                    'member_name': name.replace('\n', ''),
+                    'member_position': position.lower()
                 }
             )
 
