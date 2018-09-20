@@ -70,3 +70,5 @@ local_settings.py
 *.sh
 
 *.json
+
+*.csv

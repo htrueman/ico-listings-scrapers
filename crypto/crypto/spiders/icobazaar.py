@@ -38,7 +38,7 @@ class IcobazaarSpider(scrapy.Spider):
         xpath_wrap = partial(xpath_exract_first_text, response)
         parse_social_wrap = partial(parse_social_link, response, XPATH_SOCIAL_LINK)
         yield {
-            'title': xpath_wrap(XPATH_TITLE),
+            'title': xpath_wrap(XPATH_TITLE).split('(')[0].strip(),
             'last_updated': xpath_wrap(XPATH_UPDATED),
             'description': xpath_wrap(XPATH_DESCRIPTION),
             'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
