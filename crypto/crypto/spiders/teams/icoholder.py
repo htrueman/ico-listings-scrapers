@@ -1,6 +1,6 @@
 import scrapy
 
-from ...utils import xpath_exract_first_text
+from ...utils import xpath_exract_first_text, unify_title
 
 XPATH_TITLE = '//div[@class="ico-titles-in-view"]/h1'
 
@@ -21,7 +21,7 @@ class IcoholderMembersSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-        ico_title = xpath_exract_first_text(response, XPATH_TITLE)
+        ico_title = unify_title(xpath_exract_first_text(response, XPATH_TITLE))
 
         members_names = response.xpath('//*[@id="team"]//div[@class="member-title"]/a/text()').extract()[:3]
         members_positions = response.xpath('//*[@id="team"]//div[@class="member-position"]/text()').extract()[:3]

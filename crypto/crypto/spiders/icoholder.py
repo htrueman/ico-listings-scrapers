@@ -2,7 +2,7 @@ from functools import partial
 
 import scrapy
 
-from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant
+from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title
 
 MAX_PAGE = 464
 
@@ -69,7 +69,7 @@ class IcoholderSpider(scrapy.Spider):
         extract_info_wrap = partial(extract_info, response)
 
         yield {
-            'title': xpath_wrap(XPATH_TITLE),
+            'title': unify_title(xpath_wrap(XPATH_TITLE)),
             'description': xpath_wrap(XPATH_DESCRIPTION),
             'last_updated': xpath_wrap(XPATH_LAST_UPDATE),
 

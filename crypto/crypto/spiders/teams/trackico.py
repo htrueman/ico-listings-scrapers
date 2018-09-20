@@ -1,6 +1,6 @@
 import scrapy
 
-from ...utils import xpath_exract_first_text
+from ...utils import xpath_exract_first_text, unify_title
 
 XPATH_TITLE = '//*[@class="main-container"]//h1[@class="h2"]'
 XPATH_MEMBER = '//*[@id="tab-team"]//div[contains(@class, "card-body")]'
@@ -25,7 +25,7 @@ class TrackicoSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-        ico_title = xpath_exract_first_text(response, XPATH_TITLE)
+        ico_title = unify_title(xpath_exract_first_text(response, XPATH_TITLE))
 
         members_links = response.xpath(XPATH_MEMBER + '/h5/a/@href').extract()[:3]
         members_names = response.xpath(XPATH_MEMBER + '/h5/a/text()').extract()[:3]

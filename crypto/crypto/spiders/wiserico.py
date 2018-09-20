@@ -1,5 +1,7 @@
 import scrapy
 
+from crypto.crypto.utils import unify_title
+
 
 class WisericoSpider(scrapy.Spider):
     name = 'wiserico'
@@ -47,7 +49,8 @@ class WisericoSpider(scrapy.Spider):
         except IndexError:
             ends = None
         yield {
-            'title': response.xpath('//div[contains(@class, "title")]/h1/text()').extract_first(),
+            'title': unify_title(
+                response.xpath('//div[contains(@class, "title")]/h1/text()').extract_first()),
             'platform': platform,
             'accepting': accepting,
             'starts': starts,

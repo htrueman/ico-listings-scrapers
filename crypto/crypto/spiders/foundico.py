@@ -2,8 +2,10 @@ from contextlib import suppress
 
 import scrapy
 
+from crypto.crypto.utils import unify_title
 
-class FoundicoSpider(scrapy.Spider):
+
+class FoundicoBaseSpider(scrapy.Spider):
     name = 'foundico'
     start_urls = [
         'https://foundico.com/icos/'
@@ -22,6 +24,15 @@ class FoundicoSpider(scrapy.Spider):
         else:
             return 'Done'
 
+    @staticmethod
+    def parse_company_page(self, response):
+        yield {}
+
+
+class FoundicoSpider(FoundicoBaseSpider):
+    name = 'foundico'
+
+    @staticmethod
     def parse_company_page(self, response):
         token_price = response.xpath(
             '//tr[./td[contains(., "Token price")]]/child::td[3]/text()').extract_first()
@@ -31,7 +42,7 @@ class FoundicoSpider(scrapy.Spider):
             '//div[@id="ico-end"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
 
         data = {
-            'title': response.xpath('//h1/text()').extract_first(),
+            'title': unify_title(response.xpath('//h1/text()').extract_first()),
             'type': response.xpath(
                 '//tr[./td[contains(., "Type")]]/child::td[3]/text()').extract_first(),
             'category': response.xpath(
