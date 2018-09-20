@@ -30,7 +30,7 @@ class IcobazaarSpider(scrapy.Spider):
 
     def parse(self, response):
         next_pages = response.xpath('//div[contains(@class, "ico")]/a[@class="ico-link"]/@href').extract()
-        titles = response.xpath('//div[contains(@class, "ico")]/h5').extract()
+        titles = response.xpath('//div[contains(@class, "ico")]/h5/text()').extract()
         for next_page, title in zip(next_pages, titles):
             yield response.follow(next_page, callback=self.parse_ico, meta={'title': title})
 
