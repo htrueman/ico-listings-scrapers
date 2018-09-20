@@ -103,11 +103,5 @@ class IcoholderSpider(scrapy.Spider):
             'bitcointalk_link': parse_social_wrap('bitcointalk.org'),
             'slack_link': parse_social_wrap('slack.com'),
             'youtube_link': parse_social_wrap('youtube.com'),
-
-            # 'ceo_name': xpath_wrap(XPATH_CEO_NAME),
-            # 'cto_name': xpath_wrap(XPATH_CTO_NAME),
-            #
-            # 'ceo_link': xpath_tolerant(response, XPATH_CEO_LINK),
-            # 'cto_link': xpath_tolerant(response, XPATH_CTO_LINK),
         }
 

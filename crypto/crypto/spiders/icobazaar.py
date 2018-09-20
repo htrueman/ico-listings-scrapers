@@ -2,7 +2,7 @@ from functools import partial
 
 import scrapy
 
-from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant
+from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title
 
 XPATH_TITLE = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1'
 XPATH_UPDATED = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span'
@@ -29,16 +29,16 @@ class IcobazaarSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        next_pages = response.xpath('//*[@id="PjaxForm"]/div[4]/div/a/@href').extract()
-
-        for next_page in next_pages:
-            yield response.follow(next_page, callback=self.parse_ico)
+        next_pages = response.xpath('//div[contains(@class, "ico")]/a[@class="ico-link"]/@href').extract()
+        titles = response.xpath('//div[contains(@class, "ico")]/h5').extract()
+        for next_page, title in zip(next_pages, titles):
+            yield response.follow(next_page, callback=self.parse_ico, meta={'title': title})
 
     def parse_ico(self, response):
         xpath_wrap = partial(xpath_exract_first_text, response)
         parse_social_wrap = partial(parse_social_link, response, XPATH_SOCIAL_LINK)
         yield {
-            'title': xpath_wrap(XPATH_TITLE).split('(')[0].strip(),
+            'title': unify_title(response.meta['title']),
             'last_updated': xpath_wrap(XPATH_UPDATED),
             'description': xpath_wrap(XPATH_DESCRIPTION),
             'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
@@ -58,7 +58,3 @@ class IcobazaarSpider(scrapy.Spider):
             'bitcointalk_link': parse_social_wrap('bitcointalk.org'),
             'slack_link': parse_social_wrap('slack.com'),
         }
-        # 'team': [
-        #     {'name': '', 'position': '', 'linkedin_link': ''},
-        # ]  # ???
-
