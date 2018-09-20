@@ -17,3 +17,7 @@ def parse_social_link(response, xpath_social_link, href_contains):
         return response.xpath(xpath_social_link.format(href_contains=href_contains)).extract_first()
     except AttributeError:
         return None
+
+
+def unify_title(title):
+    return title.split('(')[0].lower().capitalize()
