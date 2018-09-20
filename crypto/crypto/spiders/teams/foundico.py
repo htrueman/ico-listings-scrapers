@@ -1,4 +1,4 @@
-from crypto.crypto.utils import unify_title
+from ...utils import unify_title
 from ..foundico import FoundicoBaseSpider
 
 

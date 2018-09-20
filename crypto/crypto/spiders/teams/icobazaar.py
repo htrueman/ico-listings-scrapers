@@ -16,12 +16,13 @@ class IcobazaarMembersSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        next_pages = response.xpath('//*[@id="PjaxForm"]/div[4]/div/a/@href').extract()
-        for next_page in next_pages:
-            yield response.follow(next_page + '/team', callback=self.parse_ico)
+        next_pages = response.xpath('//div[contains(@class, "ico")]/a[@class="ico-link"]/@href').extract()
+        titles = response.xpath('//div[contains(@class, "ico")]/h5/text()').extract()
+        for next_page, title in zip(next_pages, titles):
+            yield response.follow(next_page, callback=self.parse_ico, meta={'title': title})
 
     def parse_ico(self, response):
-        ico_title = unify_title(xpath_exract_first_text(response, XPATH_TITLE))
+        ico_title = unify_title(response.meta['title'])
 
         members_names = response.xpath('//ul[@class="com-teams__wrapper"]//div[@class="user-card__name"]/text()').extract()[:3]
         members_positions = response.xpath('//ul[@class="com-teams__wrapper"]//div[@class="user-card__role"]/text()').extract()[:3]

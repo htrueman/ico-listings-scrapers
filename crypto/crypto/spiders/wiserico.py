@@ -1,6 +1,6 @@
 import scrapy
 
-from crypto.crypto.utils import unify_title
+from ..utils import unify_title
 
 
 class WisericoSpider(scrapy.Spider):

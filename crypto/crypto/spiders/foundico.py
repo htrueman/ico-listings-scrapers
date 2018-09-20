@@ -2,7 +2,7 @@ from contextlib import suppress
 
 import scrapy
 
-from crypto.crypto.utils import unify_title
+from ..utils import unify_title
 
 
 class FoundicoBaseSpider(scrapy.Spider):
