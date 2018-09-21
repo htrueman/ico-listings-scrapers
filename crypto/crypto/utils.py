@@ -1,3 +1,6 @@
+import tldextract
+
+
 def xpath_tolerant(response, xpath_selector):
     try:
         return response.xpath(xpath_selector).extract_first()
@@ -20,4 +23,16 @@ def parse_social_link(response, xpath_social_link, href_contains):
 
 
 def unify_title(title):
-    return title.split('(')[0].strip().lower().title()
+    return title.split('(')[0]\
+                .strip()\
+                .lower()\
+                .replace('network', '')\
+                .replace('ico', '')\
+                .replace('pre-ico', '')\
+                .strip()\
+                .title()
+
+
+def unify_website(website):
+    extracted = tldextract.extract(website)
+    return '{}.{}'.format(extracted.domain, extracted.suffix)

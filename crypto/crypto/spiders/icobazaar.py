@@ -2,7 +2,7 @@ from functools import partial
 
 import scrapy
 
-from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title
+from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title, unify_website
 
 XPATH_TITLE = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1'
 XPATH_UPDATED = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span'
@@ -42,7 +42,7 @@ class IcobazaarSpider(scrapy.Spider):
             'last_updated': xpath_wrap(XPATH_UPDATED),
             'description': xpath_wrap(XPATH_DESCRIPTION),
             'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
-            'website': xpath_tolerant(response, XPATH_WEBSITE),
+            'website': unify_website(xpath_tolerant(response, XPATH_WEBSITE)),
             'rating': xpath_wrap(XPATH_RATING),
             'status': xpath_wrap(XPATH_STATUS),
             'public_sale': xpath_wrap(XPATH_PUBLIC_SALE),

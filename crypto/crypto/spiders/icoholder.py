@@ -2,13 +2,15 @@ from functools import partial
 
 import scrapy
 
-from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title
+from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title, unify_website
 
 MAX_PAGE = 464
 
 
 XPATH_SOCIAL_LINK = '//div[@id="activity"]//a[@href[contains(., "{href_contains}")]]/@href'
 XPATH_TITLE = '//div[@class="ico-titles-in-view"]/h1'
+XPATH_WEBSITE = '//div[@class="links-right"]//a[contains(@title, "website")]/@href'
+
 XPATH_DESCRIPTION = '//div[@class="description-value"]'
 XPATH_LAST_UPDATE = '//div[@class="analysis"]//div[@class="last-analysis-item"]/p[2]'
 
@@ -70,6 +72,7 @@ class IcoholderSpider(scrapy.Spider):
 
         yield {
             'title': unify_title(xpath_wrap(XPATH_TITLE)),
+            'website': unify_website(xpath_tolerant(response, XPATH_WEBSITE)),
             'description': xpath_wrap(XPATH_DESCRIPTION),
             'last_updated': xpath_wrap(XPATH_LAST_UPDATE),
 

@@ -2,7 +2,7 @@ from functools import partial
 
 import scrapy
 
-from ..utils import xpath_tolerant, xpath_exract_first_text, parse_social_link, unify_title
+from ..utils import xpath_tolerant, xpath_exract_first_text, parse_social_link, unify_title, unify_website
 
 XPATH_SOCIAL_LINK = '//*[@class="main-container"]//a[@href[contains(., "{href_contains}")]]/@href'
 
@@ -58,7 +58,7 @@ class TrackicoSpider(scrapy.Spider):
             'title': unify_title(xpath_exract_first_text(response, XPATH_TITLE)),
             'rating': xpath_exract_first_text(response, XPATH_RATING),
 
-            'website': xpath_tolerant(response, XPATH_WEBSITE),
+            'website': unify_website(xpath_tolerant(response, XPATH_WEBSITE)),
             'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
 
             'bitcointalk_link': parse_social_wrap("bitcointalk.org"),
