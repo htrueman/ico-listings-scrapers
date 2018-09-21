@@ -3,8 +3,7 @@ import scrapy
 from crypto.utils import unify_title, unify_website
 
 
-class CoinscheduleSpider(scrapy.Spider):
-    name = 'coinschedule'
+class CoinscheduleBaseSpider(scrapy.Spider):
     start_urls = [
         'https://www.coinschedule.com/?live_view=2',
     ]
@@ -15,6 +14,10 @@ class CoinscheduleSpider(scrapy.Spider):
 
         for page in next_pages:
             yield response.follow(page, callback=self.parse_pages)
+
+
+class CoinscheduleSpider(CoinscheduleBaseSpider):
+    name = 'coinschedule'
 
     @staticmethod
     def get_date(date_selector, parameter, date_type):
@@ -87,7 +90,6 @@ class CoinscheduleSpider(scrapy.Spider):
         for link in self.get_social_links(response, website_names):
             result.update(link)
         yield result
-
 
     @staticmethod
     def get_social_links(response, website_names):
