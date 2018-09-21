@@ -23,7 +23,14 @@ def parse_social_link(response, xpath_social_link, href_contains):
 
 
 def unify_title(title):
-    return title.split('(')[0].strip().lower().title()
+    return title.split('(')[0]\
+                .strip()\
+                .lower()\
+                .replace('network', '')\
+                .replace('ico', '')\
+                .replace('pre-ico', '')\
+                .strip()\
+                .title()
 
 
 def unify_website(website):
