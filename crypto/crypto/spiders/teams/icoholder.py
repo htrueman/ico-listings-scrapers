@@ -1,8 +1,9 @@
 import scrapy
 
-from ...utils import xpath_exract_first_text, unify_title
+from ...utils import xpath_exract_first_text, unify_title, unify_website
 
 XPATH_TITLE = '//div[@class="ico-titles-in-view"]/h1'
+XPATH_WEBSITE = '//div[@class="links-right"]//a[contains(@title, "website")]/@href'
 
 MAX_PAGE = 464
 
@@ -22,6 +23,7 @@ class IcoholderMembersSpider(scrapy.Spider):
 
     def parse_ico(self, response):
         ico_title = unify_title(xpath_exract_first_text(response, XPATH_TITLE))
+        ico_website = unify_website(xpath_exract_first_text(response, XPATH_WEBSITE))
 
         members_names = response.xpath('//*[@id="team"]//div[@class="member-title"]/a/text()').extract()[:3]
         members_positions = response.xpath('//*[@id="team"]//div[@class="member-position"]/text()').extract()[:3]
@@ -30,6 +32,7 @@ class IcoholderMembersSpider(scrapy.Spider):
         for name, position, link in zip(members_names, members_positions, member_linkedin_links):
             yield {
                 'ico_title': ico_title,
+                'ico_website': ico_website,
                 'member_name': name,
                 'member_position': position.replace('\n', ''),
                 'member_linkedin_link': link,
