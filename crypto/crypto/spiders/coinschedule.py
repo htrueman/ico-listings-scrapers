@@ -1,6 +1,6 @@
 import scrapy
 
-from crypto.utils import unify_title
+from crypto.utils import unify_title, unify_website
 
 
 class CoinscheduleSpider(scrapy.Spider):
@@ -66,8 +66,8 @@ class CoinscheduleSpider(scrapy.Spider):
             'category': response.xpath(
                 '//ul/li/span[contains(., "Category")]'
                 '/following::span[1]/text()').extract_first().replace('\n', ''),
-            'website': response.xpath(
-                '//ul/li/span[contains(., "Website")]/following::span[1]/a/@href').extract_first(),
+            'website': unify_website(response.xpath(
+                '//ul/li/span[contains(., "Website")]/following::span[1]/a/@href').extract_first()),
             'project_type': response.xpath(
                 '//ul/li/span[contains(., "Project Type")]'
                 '/following::span[1]/text()').extract_first().replace('\n', ''),
