@@ -2,7 +2,7 @@ from contextlib import suppress
 
 import scrapy
 
-from ..utils import unify_title
+from ..utils import unify_title, unify_website
 
 
 class FoundicoBaseSpider(scrapy.Spider):
@@ -32,7 +32,6 @@ class FoundicoBaseSpider(scrapy.Spider):
 class FoundicoSpider(FoundicoBaseSpider):
     name = 'foundico'
 
-    @staticmethod
     def parse_company_page(self, response):
         token_price = response.xpath(
             '//tr[./td[contains(., "Token price")]]/child::td[3]/text()').extract_first()
@@ -76,8 +75,8 @@ class FoundicoSpider(FoundicoBaseSpider):
                 '//tr[./td[contains(., "Exchange markets")]]/child::td[3]/a/@href').extract(),
             'location': response.xpath(
                 '//tr[./td[contains(., "Location")]]/child::td[3]/text()').extract_first(),
-            'website': response.xpath(
-                '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first(),
+            'website': unify_website(response.xpath(
+                '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first()),
             'start_time': start_time[0]
                           + ', ' + response.xpath('//div[@id="ico-start"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
             if start_time else None,

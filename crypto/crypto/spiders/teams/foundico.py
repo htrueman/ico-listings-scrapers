@@ -1,4 +1,4 @@
-from ...utils import unify_title
+from ...utils import unify_title, unify_website
 from ..foundico import FoundicoBaseSpider
 
 
@@ -15,6 +15,8 @@ class FoundicoSpider(FoundicoBaseSpider):
         for name, position, link in zip(full_names, positions, links):
             yield {
                 'ico_title': unify_title(response.xpath('//h1/text()').extract_first()),
+                'ico_website': unify_website(response.xpath(
+                    '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first()),
                 'full_name': name,
                 'position': position,
                 'linkedin': link
