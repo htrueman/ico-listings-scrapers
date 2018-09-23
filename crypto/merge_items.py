@@ -1,5 +1,4 @@
 import json
-
 import tablib
 
 imported_organizations = tablib.Dataset().load(open('organizations.csv').read())
@@ -12,8 +11,8 @@ with open(organizations_file_name, 'w+') as f:
     f.write('')
 
 parts_count = 100
-
 json_orgs = json.loads(imported_organizations.export('json'))
+
 for i in range(parts_count):
     range_start = i * len(json_orgs) // parts_count
     range_end = ((i + 1) * len(json_orgs)) // parts_count
