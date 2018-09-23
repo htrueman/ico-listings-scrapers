@@ -33,7 +33,7 @@ with open(members_file_name, 'w+') as ndm_file:
                 else:
                     print(ndo_content)
                     to_write = True
-                    for ndo_organization in ndo_content:
+                    for ndo_index, ndo_organization in enumerate(ndo_content):
                         for content_key, content_value in ndo_organization.items():
                             if 'link' in content_key.lower():
                                 if organization[content_key] and \
@@ -46,7 +46,7 @@ with open(members_file_name, 'w+') as ndm_file:
                             if not to_write:
                                 organization.update({k: v for k, v in ndo_organization.items()
                                                      if len(v) > len(organization[k])})
-                                ndo_content.append(organization)
+                                ndo_content[ndo_index] = organization
                     if to_write:
                         ndo_content.append(organization)
     ndm_file.write(imported_members)
