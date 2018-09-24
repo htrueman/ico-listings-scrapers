@@ -79,7 +79,7 @@ def make_merge():
 
                         final_name = organization['Name']
                         members = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
-                        clear_imported_members_json.append(members)
+                        clear_imported_members_json += members
                         print('merged: ', merged_count)
 
                         break
@@ -89,7 +89,7 @@ def make_merge():
             if not merge:
                 ndo_content.append(organization)
                 members = find_related_members(imported_members_json, organization['Name'])
-                clear_imported_members_json.append(members)
+                clear_imported_members_json += members
 
         with open(organizations_file_name, 'w') as f:
             f.write(json.dumps(ndo_content))
