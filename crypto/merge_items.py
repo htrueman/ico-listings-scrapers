@@ -1,9 +1,5 @@
 import json
-
-import os
 import tablib
-
-parts_count = 100
 
 
 def init():
@@ -12,7 +8,10 @@ def init():
     organizations_file_name = 'non_duplicate_organizations.json'
     members_file_name = 'non_duplicate_members.json'
 
-    return imported_members, imported_organizations, organizations_file_name, members_file_name
+    members_file = open(members_file_name, 'r+')
+    members_file.write('[')
+
+    return imported_members, imported_organizations, organizations_file_name, members_file
 
 
 def find_related_members(imported_members_json, name1, name2=None, final_name=None):
@@ -40,14 +39,18 @@ def find_related_members(imported_members_json, name1, name2=None, final_name=No
     return unique_members
 
 
+def write_members(members, members_file):
+    if members:
+        members_file.write(json.dumps(members)[1:-1] + ',')
+
+
 def make_merge():
-    imported_members, imported_organizations, organizations_file_name, members_file_name = init()
+    imported_members, imported_organizations, organizations_file_name, members_file = init()
     imported_members_json = json.loads(imported_members.export('json'))
     imported_organizations_json = json.loads(imported_organizations.export('json'))
     merged_count = 0
 
     ndo_content = []
-    clear_imported_members_json = []
     imported_total = len(imported_organizations_json)
 
     mergable_link_keys = [h for h in imported_organizations.headers if 'link' in h and 'Medium' not in 'h']
@@ -79,7 +82,7 @@ def make_merge():
 
                         final_name = organization['Name']
                         members = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
-                        clear_imported_members_json += members
+                        write_members(members, members_file)
                         print('merged: ', merged_count)
 
                         break
@@ -89,13 +92,13 @@ def make_merge():
             if not merge:
                 ndo_content.append(organization)
                 members = find_related_members(imported_members_json, organization['Name'])
-                clear_imported_members_json += members
+                write_members(members, members_file)
 
-        with open(organizations_file_name, 'w') as f:
-            f.write(json.dumps(ndo_content))
+    with open(organizations_file_name, 'w') as f:
+        f.write(json.dumps(ndo_content))
 
-        with open(members_file_name, 'w') as f:
-            f.write(json.dumps(clear_imported_members_json))
+    members_file.write(']')
+    members_file.close()
 
 
 if __name__ == '__main__':
