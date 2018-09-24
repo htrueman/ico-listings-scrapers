@@ -20,24 +20,24 @@ def find_related_members(imported_members_json, name1, name2=None, final_name=No
     for member in imported_members_json:
         if member['Organization'] in [name1, name2]:
             member['Organization'] = final_name or name1
+            members.append(member)
 
-            linkedins = []
-            names = []
-            for m in members:
-                if m['Linkedin link'] and m['Linkedin link'][-1] == '/':
-                    linkedins.append(m['Linkedin link'])
-                elif m['Linkedin link']:
-                    linkedins.append(m['Linkedin link'] + '/')
-
-                names.append(m['Name'])
-
-            if member['Linkedin link'] not in linkedins or member['Name'] not in names:
-                members.append(member)
+    unique_members = []
+    while len(members):
+        name_key = 'Linkedin link'
+        link_key = 'Name'
+        current = members.pop()
+        rest_links = [m[link_key] for m in members]
+        rest_names = [m[name_key] for m in members]
+        if current[name_key] and current[name_key] in rest_names or current[link_key] and current[link_key] in rest_links:
+            pass
+        else:
+            unique_members.append(current)
 
     # if len(members) > 15:
     #     print(len(members))
     #     print('\n'.join(sorted([m['Name'] for m in members])))
-    return members
+    return unique_members
 
 
 def make_merge():
