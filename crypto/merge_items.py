@@ -15,12 +15,29 @@ def init():
     return imported_members, imported_organizations, organizations_file_name, members_file_name
 
 
-def find_related_member(imported_members_json, name1, name2=None):
-    member = {}
+def find_related_members(imported_members_json, name1, name2=None, final_name=None):
+    members = []
     for member in imported_members_json:
         if member['Organization'] in [name1, name2]:
-            member['Organization'] = name1
-    return member
+            member['Organization'] = final_name or name1
+
+            linkedins = []
+            names = []
+            for m in members:
+                if m['Linkedin link'] and m['Linkedin link'][-1] == '/':
+                    linkedins.append(m['Linkedin link'])
+                elif m['Linkedin link']:
+                    linkedins.append(m['Linkedin link'] + '/')
+
+                names.append(m['Name'])
+
+            if member['Linkedin link'] not in linkedins or member['Name'] not in names:
+                members.append(member)
+
+    # if len(members) > 15:
+    #     print(len(members))
+    #     print('\n'.join(sorted([m['Name'] for m in members])))
+    return members
 
 
 def make_merge():
@@ -39,10 +56,6 @@ def make_merge():
         print('{} of {}'.format(index, imported_total))
 
         if index == 0:
-            member = find_related_member(imported_members_json, organization['Name'])
-            imported_members_json.remove(member)
-            clear_imported_members_json.append(member)
-
             ndo_content.append(organization)
         else:
             merge = False
@@ -56,21 +69,33 @@ def make_merge():
                             merge = True
 
                     if merge:
+                        organization_name = organization['Name']
+                        ndo_organisation_name = ndo_organization['Name']
                         organization.update(
                             {k: v for k, v in ndo_organization.items() if len(v) > len(organization[k])}
                         )
                         ndo_content[ndo_index] = organization
                         merged_count += 1
+
+                        final_name = organization['Name']
+                        members = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
+                        clear_imported_members_json.append(members)
                         print('merged: ', merged_count)
+
                         break
                 if merge:
                     break
 
             if not merge:
                 ndo_content.append(organization)
+                members = find_related_members(imported_members_json, organization['Name'])
+                clear_imported_members_json.append(members)
 
-        with open(organizations_file_name, 'w+') as f:
+        with open(organizations_file_name, 'w') as f:
             f.write(json.dumps(ndo_content))
+
+        with open(members_file_name, 'w') as f:
+            f.write(json.dumps(clear_imported_members_json))
 
 
 if __name__ == '__main__':
