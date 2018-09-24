@@ -20,6 +20,7 @@ def find_related_members(imported_members_json, name1, name2=None, final_name=No
         if member['Organization'] in [name1, name2]:
             member['Organization'] = final_name or name1
             members.append(member)
+            imported_members_json.remove(member)
 
     unique_members = []
     while len(members):
@@ -33,10 +34,7 @@ def find_related_members(imported_members_json, name1, name2=None, final_name=No
         else:
             unique_members.append(current)
 
-    # if len(members) > 15:
-    #     print(len(members))
-    #     print('\n'.join(sorted([m['Name'] for m in members])))
-    return unique_members
+    return unique_members, imported_members_json
 
 
 def write_members(members, members_file):
@@ -81,7 +79,7 @@ def make_merge():
                         merged_count += 1
 
                         final_name = organization['Name']
-                        members = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
+                        members, imported_members_json = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
                         write_members(members, members_file)
                         print('merged: ', merged_count)
 
@@ -91,7 +89,7 @@ def make_merge():
 
             if not merge:
                 ndo_content.append(organization)
-                members = find_related_members(imported_members_json, organization['Name'])
+                members, imported_members_json = find_related_members(imported_members_json, organization['Name'])
                 write_members(members, members_file)
 
     with open(organizations_file_name, 'w') as f:
