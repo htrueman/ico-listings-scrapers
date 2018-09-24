@@ -1,103 +1,130 @@
 import json
+import os
+import sys
+
 import tablib
 
 
-def init():
-    imported_organizations = tablib.Dataset().load(open('organizations.csv').read())
-    imported_members = tablib.Dataset().load(open('people.csv').read())
-    organizations_file_name = 'non_duplicate_organizations.json'
-    members_file_name = 'non_duplicate_members.json'
+class MergeItems:
+    def __init__(self, imported_orgs_file_name=None, imported_members_file_name=None,
+                 *args, **kwargs):
+        if not imported_orgs_file_name or not imported_members_file_name:
+            imported_orgs_file_name, imported_members_file_name = \
+                os.listdir('files_to_import')[0], os.listdir('files_to_import')[1]
+        self.imported_organizations = tablib.Dataset().load(open(imported_orgs_file_name).read())
+        self.imported_members = tablib.Dataset().load(open(imported_members_file_name).read())
+        self.organizations_file_name = 'non_duplicate_{}.json'.format(imported_orgs_file_name)
+        self.members_file_name = 'non_duplicate_{}.json'.format(imported_members_file_name)
 
-    members_file = open(members_file_name, 'r+')
-    members_file.write('[')
+        with open(self.members_file_name, 'w+') as f:
+            f.write('')
+        self.members_file = open(self.members_file_name, 'r+')
+        self.members_file.write('[')
 
-    return imported_members, imported_organizations, organizations_file_name, members_file
+        self.ndo_content = []
 
+        self.make_merge()
 
-def find_related_members(imported_members_json, name1, name2=None, final_name=None):
-    members = []
-    for member in imported_members_json:
-        if member['Organization'] in [name1, name2]:
-            member['Organization'] = final_name or name1
-            members.append(member)
-            imported_members_json.remove(member)
+    @staticmethod
+    def find_related_members(imported_members_json, name1, name2=None, final_name=None):
+        members = []
+        for member in imported_members_json:
+            if member['Organization'] in [name1, name2]:
+                member['Organization'] = final_name or name1
+                members.append(member)
+                imported_members_json.remove(member)
 
-    unique_members = []
-    while len(members):
-        name_key = 'Linkedin link'
-        link_key = 'Name'
-        current = members.pop()
-        rest_links = [m[link_key] for m in members]
-        rest_names = [m[name_key] for m in members]
-        if current[name_key] and current[name_key] in rest_names or current[link_key] and current[link_key] in rest_links:
-            pass
-        else:
-            unique_members.append(current)
+        unique_members = []
+        while len(members):
+            name_key = 'Linkedin link'
+            link_key = 'Name'
+            current = members.pop()
+            rest_links = [m[link_key] for m in members]
+            rest_names = [m[name_key] for m in members]
+            if current[name_key] \
+                    and current[name_key] in rest_names \
+                    or current[link_key] \
+                    and current[link_key] in rest_links:
+                pass
+            else:
+                unique_members.append(current)
 
-    return unique_members, imported_members_json
+        return unique_members, imported_members_json
 
+    @staticmethod
+    def write_members(members, members_file):
+        if members:
+            members_file.write(json.dumps(members)[1:-1] + ',')
 
-def write_members(members, members_file):
-    if members:
-        members_file.write(json.dumps(members)[1:-1] + ',')
+    def merge_main(self, organization, mergeable_link_keys,
+                   merged_count, imported_members_json):
+        merge = False
+        for ndo_index, ndo_organization in enumerate(self.ndo_content):
+            for content_key, content_value in ndo_organization.items():
+                if content_key == 'Address':
+                    if organization[content_key] and organization[content_key] == content_value:
+                        merge = True
+                elif content_key in mergeable_link_keys:
+                    if organization[content_key] \
+                            and content_value \
+                            and organization[content_key].lower() == content_value.lower():
+                        merge = True
 
-
-def make_merge():
-    imported_members, imported_organizations, organizations_file_name, members_file = init()
-    imported_members_json = json.loads(imported_members.export('json'))
-    imported_organizations_json = json.loads(imported_organizations.export('json'))
-    merged_count = 0
-
-    ndo_content = []
-    imported_total = len(imported_organizations_json)
-
-    mergable_link_keys = [h for h in imported_organizations.headers if 'link' in h and 'Medium' not in 'h']
-
-    for index, organization in enumerate(imported_organizations_json):
-        print('{} of {}'.format(index, imported_total))
-
-        if index == 0:
-            ndo_content.append(organization)
-        else:
-            merge = False
-            for ndo_index, ndo_organization in enumerate(ndo_content):
-                for content_key, content_value in ndo_organization.items():
-                    if content_key == 'Address':
-                        if organization[content_key] and organization[content_key] == content_value:
-                            merge = True
-                    elif content_key in mergable_link_keys:
-                        if organization[content_key] and content_value and organization[content_key].lower() == content_value.lower():
-                            merge = True
-
-                    if merge:
-                        organization_name = organization['Name']
-                        ndo_organisation_name = ndo_organization['Name']
-                        organization.update(
-                            {k: v for k, v in ndo_organization.items() if len(v) > len(organization[k])}
-                        )
-                        ndo_content[ndo_index] = organization
-                        merged_count += 1
-
-                        final_name = organization['Name']
-                        members, imported_members_json = find_related_members(imported_members_json, organization_name, ndo_organisation_name, final_name)
-                        write_members(members, members_file)
-                        print('merged: ', merged_count)
-
-                        break
                 if merge:
+                    organization_name = organization['Name']
+                    ndo_organisation_name = ndo_organization['Name']
+                    organization.update(
+                        {k: v for k, v in ndo_organization.items()
+                         if len(v) > len(organization[k])}
+                    )
+                    self.ndo_content[ndo_index] = organization
+                    merged_count += 1
+
+                    final_name = organization['Name']
+                    members, imported_members_json = self.find_related_members(
+                        imported_members_json,
+                        organization_name,
+                        ndo_organisation_name,
+                        final_name)
+                    self.write_members(members, self.members_file)
+                    print('merged: ', merged_count)
+
                     break
+            if merge:
+                break
 
-            if not merge:
-                ndo_content.append(organization)
-                members, imported_members_json = find_related_members(imported_members_json, organization['Name'])
-                write_members(members, members_file)
+        if not merge:
+            self.ndo_content.append(organization)
+            members, imported_members_json = self.find_related_members(
+                imported_members_json, organization['Name'])
+            self.write_members(members, self.members_file)
 
-    with open(organizations_file_name, 'w') as f:
-        f.write(json.dumps(ndo_content))
+    def make_merge(self):
+        imported_members_json = json.loads(self.imported_members.export('json'))
+        imported_organizations_json = json.loads(self.imported_organizations.export('json'))
+        merged_count = 0
 
-    members_file.write(']')
-    members_file.close()
+        imported_total = len(imported_organizations_json)
+
+        mergeable_link_keys = [h for h in self.imported_organizations.headers
+                               if 'link' in h and 'Medium' not in h]
+
+        for index, organization in enumerate(imported_organizations_json):
+            print('{} of {}'.format(index, imported_total))
+
+            if index == 0:
+                self.ndo_content.append(organization)
+            else:
+                self.merge_main(organization, mergeable_link_keys,
+                                merged_count, imported_members_json)
+
+        with open(self.organizations_file_name, 'w') as f:
+            f.write(json.dumps(self.ndo_content))
+
+        self.members_file.write(']')
+        self.members_file.close()
 
 
 if __name__ == '__main__':
-    make_merge()
+    print(sys.argv[1:3])
+    MergeItems(*sys.argv[1:3])
