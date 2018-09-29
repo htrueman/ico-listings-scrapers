@@ -1,9 +1,25 @@
+import sys
+
 import tablib
 
 
-imported_data = tablib.Dataset().load(open('non_duplicate_organizations.json').read())
+class JsonToCsv:
+    def __init__(self, *args):
+        print('here')
+        self.file_names = args
+        print(args)
 
-with open('non_duplicate_organizations.csv', 'w+') as f:
-    f.write(imported_data.export('csv'))
+        self.main()
 
-print('Done')
+    def main(self):
+        for file in self.file_names:
+            imported_data = tablib.Dataset().load(open(file).read())
+
+            with open('{}.csv'.format(file.split('.')[0]), 'w+') as f:
+                f.write(imported_data.export('csv'))
+
+        print('Done')
+
+
+if __name__ == '__main__':
+    JsonToCsv(*sys.argv[1:])
