@@ -1,7 +1,9 @@
 from functools import partial
 
 import scrapy
+from scrapy.loader import ItemLoader
 
+from crypto.items import Organization
 from ..utils import xpath_tolerant, xpath_exract_first_text, parse_social_link, unify_title, unify_website
 
 
@@ -45,50 +47,6 @@ class TrackicoSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-
-        try:
-            bounty_link = response.xpath(XPATH_SOCIAL_LINK.format(href_contains="bitcointalk.org")).extract()[1]
-        except Exception:
-            bounty_link = None
-
-        parse_social_wrap = partial(parse_social_link, response, XPATH_SOCIAL_LINK)
-
-        yield {
-            'title': unify_title(xpath_exract_first_text(response, XPATH_TITLE)),
-            'rating': xpath_exract_first_text(response, XPATH_RATING),
-
-            'website': unify_website(xpath_tolerant(response, XPATH_WEBSITE)),
-            'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
-
-            'bitcointalk_link': parse_social_wrap("bitcointalk.org"),
-            'telegram_link': parse_social_wrap("t.me"),
-            'twitter_link': parse_social_wrap("twitter.com"),
-            'medium_link': parse_social_wrap("medium.com"),
-            'facebook_link': parse_social_wrap("facebook.com"),
-            'linkedin_link': parse_social_wrap("linkedin.com"),
-            'reddit_link': parse_social_wrap("reddit.com"),
-            'github_link': parse_social_wrap("github.com"),
-            'instagram_link': parse_social_wrap("instagram.com"),
-
-            'bounty_link': bounty_link,
-
-            'pre_ico_date_range': xpath_exract_first_text(response, XPATH_PRE_SALE),
-            'ico_date_range': xpath_exract_first_text(response, XPATH_TOKEN_SALE),
-
-            'country': xpath_exract_first_text(response, XPATH_COUNTRY),
-
-            'platform': xpath_exract_first_text(response, XPATH_PLATFORM),
-            'token_price': xpath_exract_first_text(response, XPATH_TOKEN_PRICE),
-
-            'token_for_sale': xpath_exract_first_text(response, XPATH_TOKEN_FOR_SALE),
-            'token_supply': xpath_exract_first_text(response, XPATH_TOKEN_SUPPLY),
-
-            'soft_cap': xpath_exract_first_text(response, XPATH_SOFT_CAP),
-            'hard_cap': xpath_exract_first_text(response, XPATH_HARD_CAP),
-
-            'accepting': xpath_exract_first_text(response, XPATH_ACCEPTING),
-            'restricted_countries': xpath_exract_first_text(response, XPATH_RESTRICTED_COUNTRIES),
-            'kyc': xpath_exract_first_text(response, XPATH_KYC),
-            'whitelist': xpath_exract_first_text(response, XPATH_WHITELIST),
-            'bonus': ' '.join(text for text in response.xpath(XPATH_BONUS).extract())
-        }
+        loader = ItemLoader(item=Organization(), response=response)
+        loader.add_xpath('name', XPATH_TITLE)
+        yield loader.load_item()
