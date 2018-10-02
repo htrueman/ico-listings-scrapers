@@ -3,7 +3,7 @@ import sys
 
 import tablib
 
-from crypto.utils import unify_title, unify_website
+from .crypto.utils import unify_title, unify_website
 
 
 class RemoveDuplicateItems:
