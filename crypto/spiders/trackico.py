@@ -4,6 +4,7 @@ import scrapy
 
 from ..utils import xpath_tolerant, xpath_exract_first_text, parse_social_link, unify_title, unify_website
 
+
 XPATH_SOCIAL_LINK = '//*[@class="main-container"]//a[@href[contains(., "{href_contains}")]]/@href'
 
 XPATH_TITLE = '//*[@class="main-container"]//h1[@class="h2"]'
@@ -33,7 +34,6 @@ class TrackicoSpider(scrapy.Spider):
 
     def start_requests(self):
         urls = ('https://www.trackico.io/{}/'.format(i) for i in range(1, MAX_PAGE + 1))
-
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse)
 
@@ -41,7 +41,6 @@ class TrackicoSpider(scrapy.Spider):
         next_pages = response.css(
             '.row.equal-height .col-md-6.col-xl-4 a::attr(href)'
         ).extract()
-
         for next_page in next_pages:
             yield response.follow(next_page, callback=self.parse_ico)
 
@@ -73,8 +72,9 @@ class TrackicoSpider(scrapy.Spider):
 
             'bounty_link': bounty_link,
 
-            'pre_sale': xpath_exract_first_text(response, XPATH_PRE_SALE),
-            'token_sale': xpath_exract_first_text(response, XPATH_TOKEN_SALE),
+            'pre_ico_date_range': xpath_exract_first_text(response, XPATH_PRE_SALE),
+            'ico_date_range': xpath_exract_first_text(response, XPATH_TOKEN_SALE),
+
             'country': xpath_exract_first_text(response, XPATH_COUNTRY),
 
             'platform': xpath_exract_first_text(response, XPATH_PLATFORM),
