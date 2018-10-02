@@ -72,3 +72,5 @@ local_settings.py
 *.json
 
 *.csv
+
+files_to_process

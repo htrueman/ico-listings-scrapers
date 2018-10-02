@@ -5,9 +5,7 @@ import tablib
 
 class JsonToCsv:
     def __init__(self, *args):
-        print('here')
         self.file_names = args
-        print(args)
 
         self.main()
 

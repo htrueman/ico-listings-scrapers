@@ -1,5 +1,6 @@
 import json
 import sys
+from copy import deepcopy
 
 import tablib
 
@@ -30,19 +31,18 @@ class RemoveDuplicateItems:
         self.main()
 
     def main(self):
+        new_orgs_json_clean = deepcopy(self.new_orgs_json)
         for new_index, new_org in enumerate(self.new_orgs_json):
             for old_index, old_org in enumerate(self.old_orgs_json):
                 if unify_title(old_org['Name']).lower() == new_org['Name'].lower() \
                         or unify_website(old_org['Site']) == new_org['Address']:
 
-                    del self.new_orgs_json[new_index]
-                    del self.old_orgs_json[old_index]
-                    print('Old index: ', old_index)
-                    print('New index: ', new_index)
-                    print('Org name: ', new_org['Name'])
+                    if new_org in new_orgs_json_clean:
+                        new_orgs_json_clean.remove(new_org)
+                        print(len(new_orgs_json_clean))
 
         with open(self.ndo_clean_file_name, 'w+') as f:
-            f.write(json.dumps(self.new_orgs_json))
+            f.write(json.dumps(new_orgs_json_clean))
 
 
 if __name__ == '__main__':
