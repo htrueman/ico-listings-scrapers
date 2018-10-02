@@ -73,4 +73,6 @@ local_settings.py
 
 *.csv
 
+data/
+
 files_to_process
