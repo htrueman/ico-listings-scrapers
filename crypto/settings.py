@@ -64,9 +64,9 @@ DOWNLOAD_DELAY = 0.7
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'crypto.pipelines.CryptoPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'crypto.pipelines.OrganizationPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
