@@ -30,6 +30,7 @@ class Organization(scrapy.Item):
         output_processor=TakeFirst()
     )
     country = scrapy.Field(output_processor=TakeFirst())
+    whitepaper = scrapy.Field(output_processor=TakeFirst())
 
     # social links
     bitcointalk_link = scrapy.Field(output_processor=TakeFirst())
@@ -45,22 +46,60 @@ class Organization(scrapy.Item):
     youtube_link = scrapy.Field(output_processor=TakeFirst())
 
     # # statistics
-    hardcap = scrapy.Field()
-    rating = scrapy.Field()
-    number_of_tokens = scrapy.Field()
-    raised_funds = scrapy.Field()
-    softcap = scrapy.Field()
+    hardcap = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    rating = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    number_of_tokens = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    raised_funds = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    softcap = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
 
-    # # dates
-    # ico_date_range = scrapy.Field()
-    # pre_ico_date_range = scrapy.Field()
-    # total_ico_date_range = scrapy.Field()
-    #
-    # # extra
-    # team_description = scrapy.Field()
-    # team_rating = scrapy.Field()
-    # token_bonus_available = scrapy.Field()
-    # token_distribution = scrapy.Field()
-    # token_name = scrapy.Field()
-    # token_price = scrapy.Field()
-    # tokens_for_sale = scrapy.Field()
+    # dates
+    ico_date_range = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    pre_ico_date_range = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    total_ico_date_range = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+
+    # extra
+    accepting = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    know_your_customer = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    platform = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
+    restricted_countries = scrapy.Field()
+    team_description = scrapy.Field()
+    team_rating = scrapy.Field()
+    token_bonus_available = scrapy.Field()
+    token_distribution = scrapy.Field()
+    token_name = scrapy.Field()
+    token_price = scrapy.Field()
+    tokens_for_sale = scrapy.Field()
+    whitelist = scrapy.Field()
