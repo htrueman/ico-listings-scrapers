@@ -1,7 +1,6 @@
 import json
 import sys
 import datetime
-from collections import OrderedDict
 
 import dateparser
 import tablib
@@ -18,25 +17,41 @@ class SpitDeals:
         orgs = tablib.Dataset().load(open(self.orgs_file_name).read())
         self.orgs_json = json.loads(orgs.export('json'))
 
+        self.deals_file_name = 'sorted_deals.json'
+        with open(self.deals_file_name, 'w+') as f:
+            f.write('')
+
+        self.deals_file = open(self.deals_file_name, 'a+')
+
         self.main()
 
     def main(self):
-        for org in self.orgs_json:
-            dates_dict = OrderedDict()
-            dates_dict.update({'Main sale end (date)': org['Main sale end (date)']})
-            # for key, value in org.items():
-            #     date_marks = ['sale', 'date', 'ico']
-            #     not_wanted_date_marks = ['update', 'activity', 'for']
-            #     if any(x in key.lower() for x in date_marks) \
-            #             and not any(x in key.lower() for x in not_wanted_date_marks):
-            #         dates_dict.update({key: value})
-            # ordered_dates_dict = OrderedDict(
-            #     sorted(dates_dict.items(), key=lambda x: print(x))
-            # )
+        self.deals_file.write('[\n')
 
-            # print(ordered_dates_dict)
+        for index, org in enumerate(self.orgs_json):
+            if org['Main sale end (date)']:
+                end_date = dateparser.parse(org['Main sale end (date)'])
+            elif org['Token sale range (str)'] and '-' in org['Token sale range (str)']:
+                end_date = dateparser.parse(org['Token sale range (str)'].split('-')[1])
+            elif org['Pre-sale end (date)']:
+                end_date = dateparser.parse(org['Main sale end (date)'])
+            elif org['Pre-sale range (str)'] and '-' in org['Pre-sale range (str)']:
+                end_date = dateparser.parse(org['Pre-sale range (str)'].split('-')[1])
+            else:
+                end_date = None
 
-            break
+            deal_dict = {
+                'title': org['Name'] + ' - deal',
+                'organization': org['Name']
+            }
+            if end_date:
+                deal_dict['pipeline'] = '3-ico-finished'
+                if end_date >= datetime.datetime.now():
+                    # Active ICO
+                    deal_dict['pipeline'] = '2-ico-in-progress'
+            separator = ',' if index + 1 != len(self.orgs_json) else ''
+            self.deals_file.write(json.dumps(deal_dict) + separator + '\n')
+        self.deals_file.write(']')
 
 
 if __name__ == '__main__':
