@@ -60,23 +60,23 @@ class TrackicoSpider(scrapy.Spider):
 
         # general
         loader.add_xpath('name', XPATHS['TITLE'])
-        # loader.add_xpath('site', XPATHS['WEBSITE'])
-        # loader.add_xpath('country', XPATHS['COUNTRY'])
-        # loader.add_xpath('whitepaper', XPATHS['WHITEPAPER'])
+        loader.add_xpath('site', XPATHS['WEBSITE'])
+        loader.add_xpath('country', XPATHS['COUNTRY'])
+        loader.add_xpath('whitepaper', XPATHS['WHITEPAPER'])
 
         # # social links
-        # for key, value in SOCIAL_LINK_BASES.items():
-        #     loader.add_xpath(key, XPATHS['SOCIAL_LINK'].format(href_contains=value))
+        for key, value in SOCIAL_LINK_BASES.items():
+            loader.add_xpath(key, XPATHS['SOCIAL_LINK'].format(href_contains=value))
         #
         # # statistics
-        # loader.add_xpath('hardcap', XPATHS['HARD_CAP'])
-        # loader.add_xpath('rating', XPATHS['RATING'])
-        # loader.add_xpath('number_of_tokens', XPATHS['TOKEN_SUPPLY'])
-        # loader.add_xpath('softcap', XPATHS['SOFT_CAP'])
+        loader.add_xpath('hardcap', XPATHS['HARD_CAP'])
+        loader.add_xpath('rating', XPATHS['RATING'])
+        loader.add_xpath('number_of_tokens', XPATHS['TOKEN_SUPPLY'])
+        loader.add_xpath('softcap', XPATHS['SOFT_CAP'])
 
         # dates
-        # loader.add_xpath('ico_date_range', XPATHS['TOKEN_SALE'])
-        # loader.add_xpath('pre_ico_date_range', XPATHS['PRE_SALE'])
+        loader.add_xpath('ico_date_range', XPATHS['TOKEN_SALE'])
+        loader.add_xpath('pre_ico_date_range', XPATHS['PRE_SALE'])
 
         # extra
         loader.add_xpath('accepting', XPATHS['ACCEPTING'])
