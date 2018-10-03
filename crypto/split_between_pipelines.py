@@ -41,8 +41,9 @@ class SpitDeals:
                 end_date = None
 
             deal_dict = {
-                'title': org['Name'] + ' - deal',
-                'organization': org['Name']
+                'Deal - Title': org['Name'] + ' - deal',
+                'Organization - Name': org['Name'],
+                'Organization - Address': org['Address'],
             }
             if end_date:
                 deal_dict['pipeline'] = '3-ico-finished'
