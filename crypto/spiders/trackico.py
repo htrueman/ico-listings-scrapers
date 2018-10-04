@@ -59,34 +59,12 @@ class TrackicoSpider(scrapy.Spider):
     def parse_ico(response):
         loader = ItemLoader(item=Organization(), response=response)
 
-        # general
-        loader.add_xpath('name', XPATHS['NAME'])
-        loader.add_xpath('site', XPATHS['SITE'])
-        loader.add_xpath('country', XPATHS['COUNTRY'])
-        loader.add_xpath('whitepaper', XPATHS['WHITEPAPER'])
+        for field in Organization.fields:
+            if 'link' not in field:
+                loader.add_xpath(field, XPATHS.get(field.upper()))
 
         # social links
         for key, value in SOCIAL_LINK_BASES.items():
             loader.add_xpath(key, XPATHS['SOCIAL_LINK'].format(href_contains=value))
-
-        # statistics
-        loader.add_xpath('hardcap', XPATHS['HARDCAP'])
-        loader.add_xpath('rating', XPATHS['RATING'])
-        loader.add_xpath('number_of_tokens', XPATHS[' NUMBER_OF_TOKENS'])
-        loader.add_xpath('softcap', XPATHS['SOFTCAP'])
-
-        # dates
-        loader.add_xpath('ico_date_range', XPATHS['ICO_DATE_RANGE'])
-        loader.add_xpath('pre_ico_date_range', XPATHS['PRE_ICO_DATE_RANGE'])
-
-        # extra
-        loader.add_xpath('accepting', XPATHS['ACCEPTING'])
-        loader.add_xpath('bonus', XPATHS['BONUS'])
-        loader.add_xpath('know_your_customer', XPATHS['KNOW_YOUR_CUSTOMER'])
-        loader.add_xpath('platform', XPATHS['PLATFORM'])
-        loader.add_xpath('restricted_countries', XPATHS['RESTRICTED_COUNTRIES'])
-        loader.add_xpath('token_price', XPATHS['TOKEN_PRICE'])
-        loader.add_xpath('tokens_for_sale', XPATHS['TOKENS_FOR_SALE'])
-        loader.add_xpath('whitelist', XPATHS['WHITELIST'])
 
         return loader.load_item()
