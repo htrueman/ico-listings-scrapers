@@ -1,7 +1,8 @@
 import scrapy
-from scrapy.loader.processors import TakeFirst, MapCompose
+from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
 from crypto.utils import clear_text, unify_title, unify_website
+from w3lib.html import remove_tags
 
 
 SOCIAL_LINK_BASES = {
@@ -17,6 +18,13 @@ SOCIAL_LINK_BASES = {
     'twitter_link': 'twitter.com',
     'youtube_link': 'github.com',
 }
+
+
+def default_field():
+    return scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=TakeFirst()
+    )
 
 
 class Organization(scrapy.Item):
@@ -46,60 +54,34 @@ class Organization(scrapy.Item):
     youtube_link = scrapy.Field(output_processor=TakeFirst())
 
     # # statistics
-    hardcap = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    rating = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    number_of_tokens = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    raised_funds = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    softcap = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
+    hardcap = default_field()
+    rating = default_field()
+    number_of_tokens = default_field()
+    raised_funds = default_field()
+    softcap = default_field()
 
     # dates
-    ico_date_range = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    pre_ico_date_range = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    total_ico_date_range = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
+    ico_date_range = default_field()
+    pre_ico_date_range = default_field()
+    total_ico_date_range = default_field()
 
     # extra
-    accepting = scrapy.Field(
+    accepting = default_field()
+    bonus = scrapy.Field(
         input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
+        ourput_processor=Join(separator='\n')
     )
-    know_your_customer = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
+    know_your_customer = default_field()
+    platform = default_field()
+    restricted_countries = default_field()
+    team_description = default_field()
+    team_rating = default_field()
+    token_bonus_available = default_field()
+    token_distribution = default_field()
+    token_name = default_field()
+    token_price = scrapy.Field(
+        input_processor=MapCompose(clear_text, remove_tags),
+        output_processor=Join()
     )
-    platform = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=TakeFirst()
-    )
-    restricted_countries = scrapy.Field()
-    team_description = scrapy.Field()
-    team_rating = scrapy.Field()
-    token_bonus_available = scrapy.Field()
-    token_distribution = scrapy.Field()
-    token_name = scrapy.Field()
-    token_price = scrapy.Field()
-    tokens_for_sale = scrapy.Field()
-    whitelist = scrapy.Field()
+    tokens_for_sale = default_field()
+    whitelist = default_field()
