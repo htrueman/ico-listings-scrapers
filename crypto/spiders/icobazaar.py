@@ -32,7 +32,7 @@ XPATHS = {
 
 }
 
-MAX_PAGE = 1
+MAX_PAGE = 31
 
 
 class IcobazaarSpider(scrapy.Spider):
