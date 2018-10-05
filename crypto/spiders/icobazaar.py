@@ -1,23 +1,31 @@
-from functools import partial
-
 import scrapy
 
-from ..utils import xpath_exract_first_text, parse_social_link, xpath_tolerant, unify_title, unify_website
+from crypto.items import load_organization
 
-XPATH_TITLE = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1'
-XPATH_UPDATED = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span'
-XPATH_DESCRIPTION = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p'
-XPATH_WHITEPAPER = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/li/a[text()[contains(., "Whitepaper")]]/@href'
-XPATH_WEBSITE = '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/li/a[text()[contains(., "Website")]]/@href'
-XPATH_RATING = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div[2]/div[1]'
-XPATH_STATUS = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div[span[contains(., "Status")]]/child::span[2]/span'
-XPATH_PUBLIC_SALE = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div[span[contains(., "Public sale")]]/child::span[2]'
-XPATH_CAP = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div[span[contains(., "Cap")]]/child::span[2]'
-XPATH_GOAL = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div[span[contains(., "Goal")]]/child::span[2]'
-XPATH_PRICE = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div[span[contains(., "Price")]]/child::span[2]'
-XPATH_SOCIAL_LINK = '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/div/div/a/@href[contains(., "{href_contains}")]'
 
-MAX_PAGE = 32
+XPATHS = {
+    'TITLE': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1',
+    'UPDATED': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span',
+    'DESCRIPTION': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p',
+    'WHITEPAPER': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/'
+                  'li/a[text()[contains(., "Whitepaper")]]/@href',
+    'WEBSITE': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/li/a[text()[contains(., "Website")]]/@href',
+    'RATING': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div[2]/div[1]',
+    'STATUS': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/'
+              'div[span[contains(., "Status")]]/child::span[2]/span',
+    'PUBLIC_SALE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
+                   'div/div/div[span[contains(., "Public sale")]]/child::span[2]',
+    'CAP': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
+           'div/div/div[span[contains(., "Cap")]]/child::span[2]',
+    'GOAL': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/'
+            'div/div[span[contains(., "Goal")]]/child::span[2]',
+    'PRICE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
+             'div/div/div[span[contains(., "Price")]]/child::span[2]',
+    'SOCIAL_LINK': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
+                   'div/div/div/div/a/@href[contains(., "{href_contains}")]',
+}
+
+MAX_PAGE = 1
 
 
 class IcobazaarSpider(scrapy.Spider):
@@ -30,31 +38,10 @@ class IcobazaarSpider(scrapy.Spider):
 
     def parse(self, response):
         next_pages = response.xpath('//div[contains(@class, "ico")]/a[@class="ico-link"]/@href').extract()
-        titles = response.xpath('//div[contains(@class, "ico")]/h5/text()').extract()
-        for next_page, title in zip(next_pages, titles):
-            yield response.follow(next_page, callback=self.parse_ico, meta={'title': title})
+        names = response.xpath('//div[contains(@class, "ico")]/h5/text()').extract()
+        for next_page, name in zip(next_pages, names):
+            yield response.follow(next_page, callback=self.parse_ico, meta={'name': name})
 
-    def parse_ico(self, response):
-        xpath_wrap = partial(xpath_exract_first_text, response)
-        parse_social_wrap = partial(parse_social_link, response, XPATH_SOCIAL_LINK)
-        yield {
-            'title': unify_title(response.meta['title']),
-            'last_updated': xpath_wrap(XPATH_UPDATED),
-            'description': xpath_wrap(XPATH_DESCRIPTION),
-            'whitepaper': xpath_tolerant(response, XPATH_WHITEPAPER),
-            'website': unify_website(xpath_tolerant(response, XPATH_WEBSITE)),
-            'rating': xpath_wrap(XPATH_RATING),
-            'status': xpath_wrap(XPATH_STATUS),
-            'public_sale': xpath_wrap(XPATH_PUBLIC_SALE),
-            'cap': xpath_wrap(XPATH_CAP),
-            'goal': xpath_wrap(XPATH_GOAL),
-            'price': xpath_wrap(XPATH_PRICE),
-            'twitter_link': parse_social_wrap('twitter.com'),
-            'linkedin_link': parse_social_wrap('linkedin.com'),
-            'telegram_link': parse_social_wrap('t.me'),
-            'reddit_link': parse_social_wrap('reddit.com'),
-            'facebook_link': parse_social_wrap('facebook.com'),
-            'github_link': parse_social_wrap('github.com'),
-            'bitcointalk_link': parse_social_wrap('bitcointalk.org'),
-            'slack_link': parse_social_wrap('slack.com'),
-        }
+    @staticmethod
+    def parse_ico(response):
+        return load_organization(response, XPATHS, context={'name': response.meta['name']})

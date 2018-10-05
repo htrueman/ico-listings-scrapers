@@ -1,8 +1,7 @@
 import scrapy
 from scrapy.loader import ItemLoader
 
-from crypto.items import Organization, SOCIAL_LINK_BASES
-
+from crypto.items import Organization, SOCIAL_LINK_BASES, load_organization
 
 XPATHS = {
     # general
@@ -57,14 +56,4 @@ class TrackicoSpider(scrapy.Spider):
 
     @staticmethod
     def parse_ico(response):
-        loader = ItemLoader(item=Organization(), response=response)
-
-        for field in Organization.fields:
-            if 'link' not in field:
-                loader.add_xpath(field, XPATHS.get(field.upper()))
-
-        # social links
-        for key, value in SOCIAL_LINK_BASES.items():
-            loader.add_xpath(key, XPATHS['SOCIAL_LINK'].format(href_contains=value))
-
-        return loader.load_item()
+        return load_organization(response, XPATHS)

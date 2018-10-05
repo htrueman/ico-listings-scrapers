@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
 from crypto.utils import clear_text, unify_title, unify_website
@@ -25,6 +26,25 @@ def default_field():
         input_processor=MapCompose(clear_text),
         output_processor=TakeFirst()
     )
+
+
+def load_organization(response, xpaths, context=None):
+        loader = ItemLoader(item=Organization(), response=response)
+
+        for field in Organization.fields:
+            if 'link' not in field:
+                loader.add_xpath(field, xpaths.get(field.upper()))
+
+        if type(context) == dict:
+            for key, value in context.items():
+                loader.add_value(key, value)
+
+        # social links
+        if 'SOCIAL_LINK' in xpaths:
+            for key, value in SOCIAL_LINK_BASES.items():
+                loader.add_xpath(key, xpaths['SOCIAL_LINK'].format(href_contains=value))
+
+        return loader.load_item()
 
 
 class Organization(scrapy.Item):
