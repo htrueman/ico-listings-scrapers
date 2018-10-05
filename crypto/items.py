@@ -2,7 +2,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
-from crypto.utils import clear_text, unify_title, unify_website
+from crypto.utils import clear_text, unify_title, unify_website, strip
 from w3lib.html import remove_tags
 
 
@@ -21,9 +21,11 @@ SOCIAL_LINK_BASES = {
 }
 
 
-def default_field():
+def default_field(input_extra=None):
+    if not input_extra:
+        input_extra = []
     return scrapy.Field(
-        input_processor=MapCompose(clear_text),
+        input_processor=MapCompose(clear_text, *input_extra),
         output_processor=TakeFirst()
     )
 
@@ -81,7 +83,7 @@ class Organization(scrapy.Item):
     softcap = default_field()
 
     # dates
-    ico_date_range = default_field()
+    ico_date_range = default_field([strip])
     pre_ico_date_range = default_field()
     total_ico_date_range = default_field()
 
@@ -89,11 +91,17 @@ class Organization(scrapy.Item):
     accepting = default_field()
     bonus = scrapy.Field(
         input_processor=MapCompose(clear_text),
-        ourput_processor=Join(separator='\n')
+        output_processor=Join(separator='\n')
     )
+    description = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=Join()
+    )
+    goal = default_field()
     know_your_customer = default_field()
     platform = default_field()
     restricted_countries = default_field()
+    status = default_field()
     team_description = default_field()
     team_rating = default_field()
     token_bonus_available = default_field()
@@ -104,4 +112,5 @@ class Organization(scrapy.Item):
         output_processor=Join()
     )
     tokens_for_sale = default_field()
+    updated = default_field()
     whitelist = default_field()

@@ -4,25 +4,32 @@ from crypto.items import load_organization
 
 
 XPATHS = {
-    'TITLE': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1',
-    'UPDATED': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span',
-    'DESCRIPTION': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p',
+    # general
+    'NAME': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/h1/text()',
+    'SITE': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/li/a[text()[contains(., "Website")]]/@href',
     'WHITEPAPER': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/'
                   'li/a[text()[contains(., "Whitepaper")]]/@href',
-    'WEBSITE': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/ul/li/a[text()[contains(., "Website")]]/@href',
-    'RATING': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div[2]/div[1]',
-    'STATUS': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/'
-              'div[span[contains(., "Status")]]/child::span[2]/span',
-    'PUBLIC_SALE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
-                   'div/div/div[span[contains(., "Public sale")]]/child::span[2]',
-    'CAP': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
-           'div/div/div[span[contains(., "Cap")]]/child::span[2]',
+
+    # social link
+    'SOCIAL_LINK': '//div[@class="com-sidebar__socialbar"]//a/@href[contains(., "{href_contains}")]',
+
+    # statistics
+    'HARDCAP': '//div[@class="com-sidebar__info"]//div[span[contains(., "Cap")]]/child::span[2]/text()',
+
+    # dates
+    'ICO_DATE_RANGE': '//div[@class="com-sidebar__info"]//div[span[contains(., "Public sale")]]/child::span[2]/text()',
+
+    # extra
+    'DESCRIPTION': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p/text()',
     'GOAL': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/'
-            'div/div[span[contains(., "Goal")]]/child::span[2]',
-    'PRICE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
-             'div/div/div[span[contains(., "Price")]]/child::span[2]',
-    'SOCIAL_LINK': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
-                   'div/div/div/div/a/@href[contains(., "{href_contains}")]',
+            'div/div[span[contains(., "Goal")]]/child::span[2]/text()',
+    'RATING': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div[2]/div[1]/text()',
+    'STATUS': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/'
+              'div[span[contains(., "Status")]]/child::span[2]/span/text()',
+    'TOKEN_PRICE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
+                   'div/div/div[span[contains(., "Price")]]/child::span[2]',
+    'UPDATED': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span/text()',
+
 }
 
 MAX_PAGE = 1

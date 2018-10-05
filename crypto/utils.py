@@ -29,6 +29,7 @@ def unify_title(title):
                 .replace('network', '')\
                 .replace('ico', '')\
                 .replace('pre-ico', '')\
+                .replace('platform', '')\
                 .strip()\
                 .title()
 
@@ -40,3 +41,7 @@ def unify_website(website):
 
 def clear_text(value):
     return value.replace('\n', '')
+
+
+def strip(string):
+    return string.strip()
