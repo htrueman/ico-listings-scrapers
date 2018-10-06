@@ -37,7 +37,7 @@ class RemoveDuplicateItems:
             for old_index, old_org in enumerate(self.old_orgs_json):
                 if unify_title(old_org['name']).lower() == new_org['Name'].lower() \
                         or unify_website(old_org[getattr(OrgFields, 'site')]) == new_org['Address']\
-                        or unify_website(getattr(OrgFields, 'address')) == new_org['Address']:
+                        or unify_website(old_org[getattr(OrgFields, 'address')]) == new_org['Address']:
 
                     if new_org in new_orgs_json_clean:
                         new_orgs_json_clean.remove(new_org)

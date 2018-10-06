@@ -1,4 +1,15 @@
-class OrgFields:
+class PipedriveFieldsBase:
+    def __init__(self, *args, **kwargs):
+        self.return_dict = {
+            self.__getattribute__(key): value
+            for key, value in kwargs.items()
+        }
+
+    def get_dict_with_pipedrive_api_field_names(self):
+        return self.return_dict
+
+
+class OrgFields(PipedriveFieldsBase):
     name = 'name'
     open_deals_count = 'open_deals_count'
     related_open_deals_count = 'related_open_deals_count'
@@ -86,12 +97,3 @@ class OrgFields:
     start_date_of_ico_date_range = '2a333a658c44c0c1662bf602587c8348d40c21c5'
     tokens_for_sale = '7624affb4afec7c8566c446009d699ca3858349f'
     token_distribution = 'ef3fb9aabf598fd926241757d2a85cc552ba019d'
-
-    def __init__(self, *args, **kwargs):
-        self.return_dict = {
-            self.__getattribute__(key): value
-            for key, value in kwargs.items()
-        }
-
-    def get_dict_with_pipedrive_api_field_names(self):
-        return self.return_dict

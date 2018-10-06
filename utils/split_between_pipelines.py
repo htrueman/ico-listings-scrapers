@@ -11,13 +11,14 @@ class SpitDeals:
     Get file with non duplicate clean organizations and
     split them between pipelines by ICO status.
     """
+    deals_file_name = 'sorted_deals.json'
+
     def __init__(self, orgs_file_name):
         self.orgs_file_name = orgs_file_name
 
         orgs = tablib.Dataset().load(open(self.orgs_file_name).read())
         self.orgs_json = json.loads(orgs.export('json'))
 
-        self.deals_file_name = 'sorted_deals.json'
         with open(self.deals_file_name, 'w+') as f:
             f.write('')
 
