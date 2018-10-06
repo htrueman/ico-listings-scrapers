@@ -4,6 +4,7 @@ from copy import deepcopy
 
 import tablib
 
+from constants import OrgFields
 from crypto.utils import unify_title, unify_website
 
 
@@ -34,8 +35,9 @@ class RemoveDuplicateItems:
         new_orgs_json_clean = deepcopy(self.new_orgs_json)
         for new_index, new_org in enumerate(self.new_orgs_json):
             for old_index, old_org in enumerate(self.old_orgs_json):
-                if unify_title(old_org['Name']).lower() == new_org['Name'].lower() \
-                        or unify_website(old_org['Site']) == new_org['Address']:
+                if unify_title(old_org['name']).lower() == new_org['Name'].lower() \
+                        or unify_website(old_org[getattr(OrgFields, 'site')]) == new_org['Address']\
+                        or unify_website(getattr(OrgFields, 'address')) == new_org['Address']:
 
                     if new_org in new_orgs_json_clean:
                         new_orgs_json_clean.remove(new_org)
@@ -43,6 +45,9 @@ class RemoveDuplicateItems:
 
         with open(self.ndo_clean_file_name, 'w+') as f:
             f.write(json.dumps(new_orgs_json_clean))
+
+    def get_output_file_name(self):
+        return self.ndo_clean_file_name
 
 
 if __name__ == '__main__':

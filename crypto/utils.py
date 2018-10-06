@@ -35,8 +35,11 @@ def unify_title(title):
 
 
 def unify_website(website):
-    extracted = tldextract.extract(website)
-    return '{}.{}'.format(extracted.domain, extracted.suffix)
+    try:
+        extracted = tldextract.extract(website)
+        return '{}.{}'.format(extracted.domain, extracted.suffix)
+    except TypeError:
+        return ''
 
 
 def clear_text(value):

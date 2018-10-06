@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from scrapy import signals
-from scrapy.contrib.exporter import CsvItemExporter
+from scrapy.contrib.exporter import JsonItemExporter
 
 
 class OrganizationPipeline(object):
@@ -13,8 +13,8 @@ class OrganizationPipeline(object):
         return pipeline
 
     def spider_opened(self, spider):
-        self.file = open('output.csv', 'w+b')
-        self.exporter = CsvItemExporter(self.file)
+        self.file = open('output.json', 'w+b')
+        self.exporter = JsonItemExporter(self.file)
         self.exporter.start_exporting()
 
     def spider_closed(self, spider):
