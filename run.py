@@ -6,4 +6,5 @@ process = CrawlerProcess(get_project_settings())
 
 process.crawl('trackico')
 process.crawl('icobazaar')
+process.crawl('icoholder')
 process.start()

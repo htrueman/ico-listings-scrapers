@@ -17,15 +17,13 @@ SOCIAL_LINK_BASES = {
     'slack_link': 'slack.com',
     'telegram_link': 't.me',
     'twitter_link': 'twitter.com',
-    'youtube_link': 'github.com',
+    'youtube_link': 'youtube.com',
 }
 
 
-def default_field(input_extra=None):
-    if not input_extra:
-        input_extra = []
+def default_field():
     return scrapy.Field(
-        input_processor=MapCompose(clear_text, *input_extra),
+        input_processor=MapCompose(clear_text, strip),
         output_processor=TakeFirst()
     )
 
@@ -59,7 +57,7 @@ class Organization(scrapy.Item):
         input_processor=MapCompose(unify_website),
         output_processor=TakeFirst()
     )
-    country = scrapy.Field(output_processor=TakeFirst())
+    country = default_field()
     whitepaper = scrapy.Field(output_processor=TakeFirst())
 
     # social links
@@ -75,7 +73,7 @@ class Organization(scrapy.Item):
     twitter_link = scrapy.Field(output_processor=TakeFirst())
     youtube_link = scrapy.Field(output_processor=TakeFirst())
 
-    # # statistics
+    # statistics
     hardcap = default_field()
     rating = default_field()
     number_of_tokens = default_field()
@@ -83,9 +81,15 @@ class Organization(scrapy.Item):
     softcap = default_field()
 
     # dates
-    ico_date_range = default_field([strip])
+    ico_date_range = default_field()
     pre_ico_date_range = default_field()
     total_ico_date_range = default_field()
+
+    # extra_dates (icoholder has different structure and can display variety of stages)
+    last_stage_date_start = default_field()
+    last_stage_date_end = default_field()
+    last_stage_name = default_field()
+    last_stage_status = default_field()
 
     # extra
     accepting = default_field()
@@ -98,7 +102,9 @@ class Organization(scrapy.Item):
         output_processor=Join()
     )
     goal = default_field()
+    has_mvp = default_field()
     know_your_customer = default_field()
+    latest_stage_name = default_field()
     platform = default_field()
     restricted_countries = default_field()
     status = default_field()
