@@ -49,6 +49,5 @@ class IcobazaarSpider(scrapy.Spider):
         for next_page, name in zip(next_pages, names):
             yield response.follow(next_page, callback=self.parse_ico, meta={'name': name})
 
-    @staticmethod
-    def parse_ico(response):
-        return load_organization(response, XPATHS, context={'name': response.meta['name']})
+    def parse_ico(self, response):
+        return load_organization(response, XPATHS, context={'name': response.meta['name'], 'source': self.name})

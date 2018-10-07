@@ -63,6 +63,5 @@ class IcoholderSpider(scrapy.Spider):
         for next_page in next_pages:
             yield response.follow(next_page, callback=self.parse_ico)
 
-    @staticmethod
-    def parse_ico(response):
-        return load_organization(response, XPATHS)
+    def parse_ico(self, response):
+        return load_organization(response, XPATHS, context={'source': self.name})

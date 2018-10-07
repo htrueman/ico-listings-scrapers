@@ -6,23 +6,24 @@ import tablib
 
 
 class MergeItems:
-    def __init__(self, imported_orgs_file_name=None, imported_members_file_name=None,
-                 *args, **kwargs):
+    def __init__(self, imported_orgs_file_name=None, imported_members_file_name=None, *args, **kwargs):
         if not imported_orgs_file_name or not imported_members_file_name:
             imported_orgs_file_name, imported_members_file_name = \
                 os.listdir('files_to_import')[0], os.listdir('files_to_import')[1]
-        self.imported_organizations = tablib.Dataset().load(open(imported_orgs_file_name).read())
-        self.imported_members = tablib.Dataset().load(open(imported_members_file_name).read())
+
+        self.imported_organizations = tablib.Dataset(json.loads(open(imported_orgs_file_name).read()))
+        self.imported_members = tablib.Dataset(json.loads(open(imported_members_file_name).read()))
+
         self.organizations_file_name = 'non_duplicate_{}.json'.format(imported_orgs_file_name)
         self.members_file_name = 'non_duplicate_{}.json'.format(imported_members_file_name)
 
         with open(self.members_file_name, 'w+') as f:
             f.write('')
+
         self.members_file = open(self.members_file_name, 'r+')
         self.members_file.write('[')
 
         self.ndo_content = []
-
         self.make_merge()
 
     @staticmethod

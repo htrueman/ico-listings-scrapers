@@ -3,9 +3,13 @@ from twisted.internet import reactor, defer
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 
+from utils.merge_items import MergeItems
 
 configure_logging()
 settings = get_project_settings()
+output_file = settings['FEED_URI']
+open(output_file, 'w').close()
+
 runner = CrawlerRunner(settings)
 
 
@@ -20,7 +24,9 @@ def crawl():
 crawl()
 reactor.run()
 
-with open(settings['FEED_URI'], 'r') as f:
+with open(output_file, 'r') as f:
     content = f.read()
-with open(settings['FEED_URI'], 'w') as f:
+with open(output_file, 'w') as f:
     f.write(content.replace('\n][\n', ',\n'))
+
+# MergeItems(imported_orgs_file_name=output_file, imported_members_file_name='dummy.json')

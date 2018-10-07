@@ -28,6 +28,10 @@ def default_field():
     )
 
 
+def take_first_field():
+    return scrapy.Field(output_processor=TakeFirst())
+
+
 def load_organization(response, xpaths, context=None):
         loader = ItemLoader(item=Organization(), response=response)
 
@@ -58,20 +62,20 @@ class Organization(scrapy.Item):
         output_processor=TakeFirst()
     )
     country = default_field()
-    whitepaper = scrapy.Field(output_processor=TakeFirst())
+    whitepaper = take_first_field()
 
     # social links
-    bitcointalk_link = scrapy.Field(output_processor=TakeFirst())
-    facebook_link = scrapy.Field(output_processor=TakeFirst())
-    github_link = scrapy.Field(output_processor=TakeFirst())
-    instagram_link = scrapy.Field(output_processor=TakeFirst())
-    linkedin_link = scrapy.Field(output_processor=TakeFirst())
-    medium_link = scrapy.Field(output_processor=TakeFirst())
-    reddit_link = scrapy.Field(output_processor=TakeFirst())
-    slack_link = scrapy.Field(output_processor=TakeFirst())
-    telegram_link = scrapy.Field(output_processor=TakeFirst())
-    twitter_link = scrapy.Field(output_processor=TakeFirst())
-    youtube_link = scrapy.Field(output_processor=TakeFirst())
+    bitcointalk_link = take_first_field()
+    facebook_link = take_first_field()
+    github_link = take_first_field()
+    instagram_link = take_first_field()
+    linkedin_link = take_first_field()
+    medium_link = take_first_field()
+    reddit_link = take_first_field()
+    slack_link = take_first_field()
+    telegram_link = take_first_field()
+    twitter_link = take_first_field()
+    youtube_link = take_first_field()
 
     # statistics
     hardcap = default_field()
@@ -121,4 +125,4 @@ class Organization(scrapy.Item):
     updated = default_field()
     whitelist = default_field()
 
-    source = scrapy.Field()
+    source = take_first_field()
