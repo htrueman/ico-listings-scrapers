@@ -120,3 +120,5 @@ class Organization(scrapy.Item):
     tokens_for_sale = default_field()
     updated = default_field()
     whitelist = default_field()
+
+    source = scrapy.Field()

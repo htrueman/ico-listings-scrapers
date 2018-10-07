@@ -14,6 +14,9 @@ BOT_NAME = 'crypto'
 SPIDER_MODULES = ['crypto.spiders']
 NEWSPIDER_MODULE = 'crypto.spiders'
 
+FEED_FORMAT = 'json'
+FEED_URI = 'output.json'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'crypto (+http://www.yourdomain.com)'
@@ -64,9 +67,9 @@ DOWNLOAD_DELAY = 0.7
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'crypto.pipelines.OrganizationPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#    'crypto.pipelines.DuplicatesPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
