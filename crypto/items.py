@@ -32,8 +32,11 @@ def take_first_field():
     return scrapy.Field(output_processor=TakeFirst())
 
 
-def load_organization(response, xpaths, context=None):
-        loader = ItemLoader(item=Organization(), response=response)
+def load_organization(response, xpaths, context=None, item_cls=None):
+
+        if not item_cls:
+            item_cls = Organization
+        loader = ItemLoader(item=item_cls(), response=response)
 
         for field in Organization.fields:
             if 'link' not in field:
@@ -97,6 +100,8 @@ class Organization(scrapy.Item):
 
     # extra
     accepting = default_field()
+    airdrop_program = default_field()
+    bounty_program = default_field()
     bonus = scrapy.Field(
         input_processor=MapCompose(clear_text),
         output_processor=Join(separator='\n')
@@ -108,7 +113,6 @@ class Organization(scrapy.Item):
     goal = default_field()
     has_mvp = default_field()
     know_your_customer = default_field()
-    latest_stage_name = default_field()
     platform = default_field()
     restricted_countries = default_field()
     status = default_field()
@@ -126,3 +130,27 @@ class Organization(scrapy.Item):
     whitelist = default_field()
 
     source = take_first_field()
+
+
+def join_dates_base_info(val):
+    return ' - '.join([v for v in val if v])
+
+
+class BaseInfoOrganization(Organization):
+
+    ico_date_range = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=join_dates_base_info,
+    )
+
+
+def join_dates_foundico(val):
+    return ' - '.join([v for v in val if v])  # TODO
+
+
+class FoundicoOrganization(Organization):
+
+    ico_date_range = scrapy.Field(
+        input_processor=MapCompose(clear_text),
+        output_processor=join_dates_base_info,
+    )

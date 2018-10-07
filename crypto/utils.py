@@ -43,7 +43,7 @@ def unify_website(website):
 
 
 def clear_text(value):
-    return value.replace('\n', '')
+    return value.replace('\n', '').replace('\t', '')
 
 
 def strip(string):

@@ -1,12 +1,9 @@
-from contextlib import suppress
-
 import scrapy
 
-from ..utils import unify_title, unify_website
+from crypto.items import load_organization, FoundicoOrganization
 
 
 class FoundicoBaseSpider(scrapy.Spider):
-    name = 'foundico'
     start_urls = [
         'https://foundico.com/icos/'
     ]
@@ -29,67 +26,39 @@ class FoundicoBaseSpider(scrapy.Spider):
         yield {}
 
 
+XPATHS = {
+    # general
+    'NAME': '//h1/text()',
+    'SITE': '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()',
+    'WHITEPAPER': '//tr[./td[contains(., "White paper")]]/child::td[3]/a/@href',
+
+    # social link
+    'SOCIAL_LINK': '//tr[./td[contains(., "Links")]]/child::td[3]/a[contains(@href, "{href_contains}")]/@href',
+
+    # statistics
+    'HARDCAP': '//tr[./td[contains(., "Hard cap")]]/child::td[3]/text()',
+    'SOFTCAP': '//tr[./td[contains(., "Soft cap")]]/child::td[3]/text()',
+
+    # dates
+    'ICO_DATE_RANGE': '//div[contains(@class, "ico-calendar")]//text()',
+
+    # extra
+    'ACCEPTING': '//tr[./td[contains(., "Currencies")]]/child::td[3]/text()',
+    'AIRDROP_PROGRAM': '//tr[./td[contains(., "Airdrop program")]]/child::td[3]/text()',
+    'BOUNTY_PROGRAM': '//tr[./td[contains(., "Bounty program")]]/child::td[3]/text()',
+    'COUNTRY': '//tr[./td[contains(., "Location")]]/child::td[3]//text()',
+    'HAS_MVP': '//tr[./td[contains(., "Have working prototype")]]/child::td[3]/text()',
+    'KNOW_YOUR_CUSTOMER': '//tr[./td[contains(., "KYC of investors")]]/child::td[3]/text()',
+    'RESTRICTED_COUNTRIES': '//tr[./td[contains(., "Restricted areas")]]/child::td[3]/text()',
+    'TOKEN_PRICE': '//tr[./td[contains(., "Token price")]]/child::td[3]/text()',
+    'TOKENS_FOR_SALE': '//tr[./td[contains(., "Tokens for sale")]]/child::td[3]/text()',
+    'WHITELIST': '//tr[./td[contains(., "Whitelist of investors")]]/child::td[3]/text()'
+
+}
+
+
 class FoundicoSpider(FoundicoBaseSpider):
     name = 'foundico'
 
     def parse_company_page(self, response):
-        token_price = response.xpath(
-            '//tr[./td[contains(., "Token price")]]/child::td[3]/text()').extract_first()
-        start_time = response.xpath(
-            '//div[@id="ico-start"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
-        end_time = response.xpath(
-            '//div[@id="ico-end"]/span[@class="ico-c-month"]/text()').re(regex=r'\w+\s\w+')
-
-        data = {
-            'title': unify_title(response.xpath('//h1/text()').extract_first()),
-            'type': response.xpath(
-                '//tr[./td[contains(., "Type")]]/child::td[3]/text()').extract_first(),
-            'category': response.xpath(
-                '//tr[./td[contains(., "Category")]]/child::td[3]/a/@href').extract_first(),
-            'verified team': response.xpath(
-                '//tr[./td[contains(., "Verified team")]]/child::td[3]/text()').extract_first(),
-            'whitelist_of_investors': response.xpath(
-                '//tr[./td[contains(., "Whitelist of investors")]]/child::td[3]/text()').extract_first(),
-            'kyc_of_investors': response.xpath(
-                '//tr[./td[contains(., "KYC of investors")]]/child::td[3]/text()').extract_first(),
-            'goal_of_funding': response.xpath(
-                '//tr[./td[contains(., "Goal of funding")]]/child::td[3]/text()').extract_first(),
-            'tokens_for_sale': response.xpath(
-                '//tr[./td[contains(., "Tokens for sale")]]/child::td[3]/text()').extract_first(),
-            'token_price': token_price.replace('\t', '') if token_price else None,
-            'minimum_purchase': response.xpath(
-                '//tr[./td[contains(., "Minimum purchase")]]/child::td[3]/text()').extract_first(),
-            'airdrop_program': response.xpath(
-                '//tr[./td[contains(., "Airdrop program")]]/child::td[3]/text()').extract_first(),
-            'bounty_program': response.xpath(
-                '//tr[./td[contains(., "Bounty program")]]/child::td[3]/text()').extract_first(),
-            'have_escrow_agent': response.xpath(
-                '//tr[./td[contains(., "Have escrow agent")]]/child::td[3]/text()').extract_first(),
-            'have_working_prototype': response.xpath(
-                '//tr[./td[contains(., "Have working prototype")]]/child::td[3]/text()').extract_first(),
-            'white_paper': response.xpath(
-                '//tr[./td[contains(., "White paper")]]/child::td[3]/a/@href').extract_first(),
-            'currencies': response.xpath(
-                '//tr[./td[contains(., "Currencies")]]/child::td[3]/text()').re(regex=r'\w+'),
-            'exchange_markets': response.xpath(
-                '//tr[./td[contains(., "Exchange markets")]]/child::td[3]/a/@href').extract(),
-            'location': response.xpath(
-                '//tr[./td[contains(., "Location")]]/child::td[3]/text()').extract_first(),
-            'website': unify_website(response.xpath(
-                '//tr[./td[contains(., "Website")]]/child::td[3]/a/text()').extract_first()),
-            'start_time': start_time[0]
-                          + ', ' + response.xpath('//div[@id="ico-start"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
-            if start_time else None,
-            'end_time': end_time[0]
-                        + ', ' + response.xpath('//div[@id="ico-end"]/span[@class="ico-c-year"]/text()').re(regex=r'\d+')[0]
-            if end_time else None
-        }
-
-        links = response.xpath(
-            '//tr[./td[contains(., "Links")]]/child::td[3]/a/@href').extract(),
-
-        if len(links) > 0:
-            for link in links[0]:
-                with suppress(IndexError):
-                    data[link.split('https://')[1].split('/')[0]] = link
-        yield data
+        return load_organization(response, XPATHS, context={'source': self.name}, item_cls=FoundicoOrganization)
