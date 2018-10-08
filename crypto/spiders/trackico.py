@@ -1,7 +1,6 @@
 import scrapy
-from scrapy.loader import ItemLoader
 
-from crypto.items import Organization, SOCIAL_LINK_BASES, load_organization
+from crypto.items import load_organization
 
 XPATHS = {
     # general
@@ -16,12 +15,15 @@ XPATHS = {
     # statistics
     'HARDCAP': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Hard cap")]]/child::td[1]/text()',
     'RATING': '//*[@class="main-container"]//div[footer[contains(., "rating")]]//strong/text()',
-    'NUMBER_OF_TOKENS': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Token supply")]]/child::td[1]/text()',
+    'NUMBER_OF_TOKENS': '//*[@id="tab-financial"]//table'
+                        '/tbody/tr[./th[contains(., "Token supply")]]/child::td[1]/text()',
     'SOFTCAP': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Soft cap")]]/child::td[1]/text()',
 
     # dates
-    'PRE_ICO_DATE_RANGE': '//*[@class="main-container"]//table/tbody/tr[./th[contains(., "Pre-Sale")]]/child::td[1]/text()',
-    'ICO_DATE_RANGE': '//*[@class="main-container"]//table/tbody/tr[./th[contains(., "Token Sale")]]/child::td[1]/text()',
+    'PRE_ICO_DATE_RANGE': '//*[@class="main-container"]//table/'
+                          'tbody/tr[./th[contains(., "Pre-Sale")]]/child::td[1]/text()',
+    'ICO_DATE_RANGE': '//*[@class="main-container"]//table/tbody'
+                      '/tr[./th[contains(., "Token Sale")]]/child::td[1]/text()',
 
     # extra
     'ACCEPTING': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Accepting")]]/child::td[1]/text()',
