@@ -3,7 +3,7 @@ from twisted.internet import reactor, defer
 from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 
-from utils.merge_items import MergeItems
+from utils.post_to_pipedrive import PostToPipedrive
 
 configure_logging()
 settings = get_project_settings()
@@ -15,10 +15,10 @@ runner = CrawlerRunner(settings)
 
 @defer.inlineCallbacks
 def crawl():
-    # yield runner.crawl('trackico')
-    # yield runner.crawl('icobazaar')
-    # yield runner.crawl('icoholder')
-    # yield runner.crawl('baseinfo')
+    yield runner.crawl('trackico')
+    yield runner.crawl('icobazaar')
+    yield runner.crawl('icoholder')
+    yield runner.crawl('baseinfo')
     yield runner.crawl('foundico')
     reactor.stop()
 
@@ -31,4 +31,5 @@ with open(output_file, 'r') as f:
 with open(output_file, 'w') as f:
     f.write(content.replace('\n][\n', ',\n'))
 
-# MergeItems(imported_orgs_file_name=output_file, imported_members_file_name='dummy.json')
+print('crawled')
+PostToPipedrive(orgs_file_name=output_file)
