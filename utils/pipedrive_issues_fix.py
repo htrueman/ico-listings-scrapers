@@ -1,4 +1,6 @@
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 
 from constants import OrgFields
 from utils.post_to_pipedrive import get_base_full_path
@@ -25,6 +27,14 @@ class PipedriveIssuesFix:
             'deals'
         )
 
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+
+        self.session = session
+
         self.main()
 
     def main(self):
@@ -37,10 +47,10 @@ class PipedriveIssuesFix:
         for org_path in self.orgs_path_gen:
             pipedrive_orgs = requests.get(org_path)
             for org in pipedrive_orgs.json()['data']:
-                if org['owner_name'] == 'Vadym Hevlich':
+                if org['owner_name'] == 'Vadym Hevlich' and not org[getattr(OrgFields, 'site')]:
                     org[getattr(OrgFields, 'site')] = org[getattr(OrgFields, 'address')]
                     org[getattr(OrgFields, 'address')] = None
-                    requests.put(
+                    self.session.put(
                         self.base_put_path.format(
                             item_type_plural='organizations',
                             id=org['id']
@@ -55,7 +65,7 @@ class PipedriveIssuesFix:
             for deal in pipedrive_deals.json()['data']:
                 if deal['owner_name'] == 'Vadym Hevlich':
                     deal['owner_id'] = self.exrates_id
-                    requests.put(
+                    self.session.put(
                         self.base_put_path.format(
                             item_type_plural='deals',
                             id=deal['id']
@@ -71,7 +81,7 @@ class PipedriveIssuesFix:
                 if status_code >= 400:
                     org[getattr(OrgFields, 'name')] \
                         = org[getattr(OrgFields, 'name')] + 'NOT ACCESSIBLE'
-                    requests.put(
+                    self.session.put(
                         self.base_put_path.format(
                             item_type_plural='organizations',
                             id=org['id']
