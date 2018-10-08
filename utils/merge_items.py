@@ -37,8 +37,8 @@ class MergeItems:
 
         unique_members = []
         while len(members):
-            name_key = 'Linkedin link'
-            link_key = 'Name'
+            name_key = 'linkedin_link'
+            link_key = 'name'
             current = members.pop()
             rest_links = [m[link_key] for m in members]
             rest_names = [m[name_key] for m in members]
@@ -62,7 +62,7 @@ class MergeItems:
         merge = False
         for ndo_index, ndo_organization in enumerate(self.ndo_content):
             for content_key, content_value in ndo_organization.items():
-                if content_key == 'Address':
+                if content_key == 'site':
                     if organization[content_key] and organization[content_key] == content_value:
                         merge = True
                 elif content_key in mergeable_link_keys:
@@ -72,8 +72,8 @@ class MergeItems:
                         merge = True
 
                 if merge:
-                    organization_name = organization['Name']
-                    ndo_organisation_name = ndo_organization['Name']
+                    organization_name = organization['name']
+                    ndo_organisation_name = ndo_organization['name']
                     organization.update(
                         {k: v for k, v in ndo_organization.items()
                          if len(v) > len(organization[k])}
@@ -81,7 +81,7 @@ class MergeItems:
                     self.ndo_content[ndo_index] = organization
                     merged_count += 1
 
-                    final_name = organization['Name']
+                    final_name = organization['name']
                     members, imported_members_json = self.find_related_members(
                         imported_members_json,
                         organization_name,
@@ -97,7 +97,7 @@ class MergeItems:
         if not merge:
             self.ndo_content.append(organization)
             members, imported_members_json = self.find_related_members(
-                imported_members_json, organization['Name'])
+                imported_members_json, organization['name'])
             self.write_members(members, self.members_file)
 
     def make_merge(self):
@@ -108,7 +108,7 @@ class MergeItems:
         imported_total = len(imported_organizations_json)
 
         mergeable_link_keys = [h for h in self.imported_organizations.headers
-                               if 'link' in h and 'Medium' not in h]
+                               if 'link' in h and 'medium' not in h]
 
         for index, organization in enumerate(imported_organizations_json):
             print('{} of {}'.format(index, imported_total))

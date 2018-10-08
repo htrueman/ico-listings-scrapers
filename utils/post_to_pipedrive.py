@@ -6,12 +6,25 @@ import tablib
 import requests
 
 from constants import OrgFields
+from utils.merge_items import MergeItems
 from utils.remove_duplicates import RemoveDuplicateItems
 from utils.split_between_pipelines import SpitDeals
 
 
+def get_base_full_path(base_path, pipedrive_get_step, item_type_plural):
+    base_get_path = base_path.format(
+        item_type_plural=item_type_plural,
+        extra_params='&start={start}&limit=100&get_summary={get_summary}')
+    pipedrive_orgs = requests.get(base_get_path.format(start=0, get_summary=1))
+
+    page_count = ceil(pipedrive_orgs.json()['additional_data']['summary']['total_count'] / 100)
+    for i in range(page_count):
+        next_start = i * pipedrive_get_step
+        yield base_get_path.format(start=next_start, get_summary=0)
+
+
 class PostToPipedrive:
-    base_path = 'https://relevant-dessert.pipedrive.com/v1/{item_type_plural}' \
+    base_path = 'https://exrates.pipedrive.com/v1/{item_type_plural}' \
                 '?api_token=3b08b823cf50cc5e47baec700b369ba47f202bf0' \
                 '{extra_params}'
     pipedrive_orgs_step = 100  # max is 500
@@ -19,10 +32,7 @@ class PostToPipedrive:
 
     def __init__(self,
          orgs_file_name=None,
-         deals_file_name=None,
          members_file_name=None):
-
-        orgs_file_name = 'non_duplicate_organizations.csv'  # TODO: replace
 
         base_get_path = self.base_path.format(
             item_type_plural='organizations',
@@ -47,8 +57,9 @@ class PostToPipedrive:
                         item_pattern = '{},\n'
                     f.write(item_pattern.format(json.dumps(org)))
 
+        ndo_file_name = MergeItems(orgs_file_name)
         ndo_clean_file_name = RemoveDuplicateItems(
-            self.pipedrive_orgs_file_name, orgs_file_name).ndo_clean_file_name
+            self.pipedrive_orgs_file_name, ndo_file_name).ndo_clean_file_name
         orgs = tablib.Dataset().load(open(ndo_clean_file_name).read())
         self.orgs_json = json.loads(orgs.export('json'))
 
