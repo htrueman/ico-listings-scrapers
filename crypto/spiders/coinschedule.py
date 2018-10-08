@@ -46,26 +46,46 @@ class CoinscheduleSpider(CoinscheduleBaseSpider):
 
     def parse_pages(self, response):
         date_selector = response.xpath('//div[contains(@class, "event-tabs")]')
-        has_tabs = bool(
-            date_selector.xpath('//ul/li/a[contains(., "Pre-Sale")]/text()')
-                         .extract_first()
-        )
+        has_tabs = len(response.xpath('//div[contains(@class, "event-tabs")]/ul/li').extract()) > 1
+        has_pre_ico = bool(date_selector.xpath('//ul/li/a[contains(., "Pre")]/text()')
+                                        .extract_first())
 
         pre_ico_date_range = None
+        ico_date_range = None
+
+        # TODO: refactor
         if has_tabs:
+            if response.xpath('//div[contains(@class, "event-tabs")]/ul'
+                              '/li[@class="active"]/a[contains(., "Pre")]/text()').extract_first():
+                pre_ico_date_range = ' - '.join([
+                    self.get_date(date_selector, '', 'Start'),
+                    self.get_date(date_selector, '', 'End')
+                ])
+
+                ico_date_range = ' - '.join([
+                    self.get_date(date_selector, 'not', 'Start'),
+                    self.get_date(date_selector, 'not', 'End')
+                ])
+            else:
+                pre_ico_date_range = ' - '.join([
+                    self.get_date(date_selector, 'not', 'Start'),
+                    self.get_date(date_selector, 'not', 'End')
+                ])
+
+                ico_date_range = ' - '.join([
+                    self.get_date(date_selector, '', 'Start'),
+                    self.get_date(date_selector, '', 'End')
+                ])
+
+        elif has_pre_ico:
             pre_ico_date_range = ' - '.join([
                 self.get_date(date_selector, '', 'Start'),
                 self.get_date(date_selector, '', 'End')
             ])
-
-            ico_date_range = ' - '.join([
-                self.get_date(date_selector, 'not', 'Start'),
-                self.get_date(date_selector, 'not', 'End')
-            ])
         else:
             ico_date_range = ' - '.join([
-                self.get_date(date_selector, '', 'Start') or '',
-                self.get_date(date_selector, '', 'End') or ''
+                self.get_date(date_selector, '', 'Start'),
+                self.get_date(date_selector, '', 'End')
             ])
 
         return load_organization(response, XPATHS, context={
