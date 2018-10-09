@@ -1,6 +1,6 @@
 import scrapy
 
-from crypto.items import load_organization
+from crypto.items import load_organization, IcoholderOrganization
 
 XPATHS = {
     # general
@@ -19,11 +19,17 @@ XPATHS = {
     'SOFTCAP': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]'
                '//div[@class="assets"]/div[span[contains(., "Cap")]]/text()',
 
-    # extra_dates
-    'LAST_STAGE_DATE_START': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
-                             'div[@class="ico-list-date-from"]/text()',
-    'LAST_STAGE_DATE_END': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
-                           'div[@class="ico-list-date-to"]/text()',
+    # dates
+    'ICO_DATE_RANGE_FROM': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
+                           'div[@class="ico-list-date-from"]/text()',
+    'ICO_DATE_RANGE_TO': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
+                         'div[@class="ico-list-date-to"]/text()',
+
+    'TOTAL_ICO_DATE_RANGE_FROM': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
+                                 'div[@class="ico-list-date-from"]/text()',
+    'TOTAL_ICO_DATE_RANGE_TO': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//'
+                               'div[@class="ico-list-date-to"]/text()',
+
     'LAST_STAGE_NAME': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]/div[@class="title"]/text()',
     'LAST_STAGE_STATUS': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]'
                          '//span[contains(@class, "badge")]/text()',
@@ -58,10 +64,10 @@ class IcoholderSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        next_pages = response.xpath('//div[@class="ico-list-name-d"]/a/@href').extract()
-
+        next_pages = response.xpath('//div[@class="ico-list-name-d"]//a/@href').extract()
         for next_page in next_pages:
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-        return load_organization(response, XPATHS, context={'source': self.name})
+        return load_organization(response, XPATHS, context={'source': self.name}, item_cls=IcoholderOrganization)
+

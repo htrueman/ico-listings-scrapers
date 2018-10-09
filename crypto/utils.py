@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import tldextract
 
 
@@ -48,3 +50,12 @@ def clear_text(value):
 
 def strip(string):
     return string.strip()
+
+
+def to_common_format(date, original_formats):
+    for original_format in original_formats:
+        try:
+            return datetime.strptime(date, original_format).strftime('%Y-%m-%d')
+        except ValueError:
+            continue
+    return ''

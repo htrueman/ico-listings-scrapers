@@ -1,7 +1,7 @@
 import scrapy
 
 from crypto.items import load_organization
-
+from crypto.utils import to_common_format, xpath_exract_first_text
 
 XPATHS = {
     # general
@@ -17,7 +17,7 @@ XPATHS = {
     'HARDCAP': '//div[@class="com-sidebar__info"]//div[span[contains(., "Cap")]]/child::span[2]/text()',
 
     # dates
-    'ICO_DATE_RANGE': '//div[@class="com-sidebar__info"]//div[span[contains(., "Public sale")]]/child::span[2]/text()',
+    'ICO_DATE_RANGE': '//div[@class="com-sidebar__info"]//div[span[contains(., "Public sale")]]/child::span[2]',
 
     # extra
     'DESCRIPTION': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p/text()',
@@ -35,6 +35,13 @@ XPATHS = {
 MAX_PAGE = 31
 
 
+def dates_from_range(date_range):
+    return (
+        to_common_format(d.strip(), ['%d %b`%y'])
+        for d in date_range.split('-')
+    )
+
+
 class IcobazaarSpider(scrapy.Spider):
     name = "icobazaar"
 
@@ -50,4 +57,18 @@ class IcobazaarSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico, meta={'name': name})
 
     def parse_ico(self, response):
-        return load_organization(response, XPATHS, context={'name': response.meta['name'], 'source': self.name})
+        ico_date_range = xpath_exract_first_text(response, XPATHS['ICO_DATE_RANGE'])
+
+        ico_date_range_from = ico_date_range_to = ''
+
+        if ico_date_range:
+            ico_date_range_from, ico_date_range_to = dates_from_range(ico_date_range)
+
+        return load_organization(response, XPATHS, context={
+            'name': response.meta['name'],
+            'source': self.name,
+            'ico_date_range_from': ico_date_range_from,
+            'ico_date_range_to': ico_date_range_to,
+            'total_ico_date_range_from': ico_date_range_from,
+            'total_ico_date_range_to': ico_date_range_to,
+        })

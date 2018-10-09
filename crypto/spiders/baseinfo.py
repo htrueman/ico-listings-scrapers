@@ -14,7 +14,15 @@ XPATHS = {
     'RATING': '//*[@class="rating-block"]//div[@class="rb-rate"]/text()',
 
     # dates
-    'ICO_DATE_RANGE': '//*[contains(@class, "icoContent__timeline")]//div[@class="item-time"]/text()'
+    'ICO_DATE_RANGE_FROM': '//*[contains(@class, "icoContent__timeline")]'
+                           '//div[@class="item-time"][contains(strong/text(), "Starts")]/text()',
+    'ICO_DATE_RANGE_TO': '//*[contains(@class, "icoContent__timeline")]'
+                         '//div[@class="item-time"][contains(strong/text(), "Ends")]/text()',
+
+    'TOTAL_ICO_DATE_RANGE_FROM': '//*[contains(@class, "icoContent__timeline")]'
+                           '//div[@class="item-time"][contains(strong/text(), "Starts")]/text()',
+    'TOTAL_ICO_DATE_RANGE_TO': '//*[contains(@class, "icoContent__timeline")]'
+                         '//div[@class="item-time"][contains(strong/text(), "Ends")]/text()',
 }
 
 

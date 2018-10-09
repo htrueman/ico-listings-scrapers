@@ -1,9 +1,7 @@
-from datetime import datetime
-
 import scrapy
 
 from crypto.items import load_organization
-from crypto.utils import xpath_exract_first_text
+from crypto.utils import xpath_exract_first_text, to_common_format
 
 XPATHS = {
     # general
@@ -41,18 +39,15 @@ XPATHS = {
                        'table/tbody/tr[./th[contains(., "Token for sale")]]/child::td[1]/text()',
     'WHITELIST': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Whitelist")]]/child::td[1]/text()',
 }
-MAX_PAGE = 1
 
-
-def to_common_format(date):
-    try:
-        return datetime.strptime(date, '%m/%d/%Y').strftime('%Y-%m-%d')
-    except ValueError:
-        return ''
+MAX_PAGE = 164
 
 
 def dates_from_range(date_range):
-    return (to_common_format(d.strip().split()[0]) for d in date_range.split('-'))
+    return (
+        to_common_format(d.strip().split()[0], ['%m/%d/%Y'])
+        for d in date_range.split('-')
+    )
 
 
 class TrackicoSpider(scrapy.Spider):
@@ -74,12 +69,24 @@ class TrackicoSpider(scrapy.Spider):
         pre_ico_date_range = xpath_exract_first_text(response, XPATHS['PRE_ICO_DATE_RANGE'])
         ico_date_range = xpath_exract_first_text(response, XPATHS['ICO_DATE_RANGE'])
 
-        pre_ico_date_range_from, pre_ico_date_range_to, ico_date_range_from, ico_date_range_to = '', '', '', ''
+        pre_ico_date_range_from = \
+            pre_ico_date_range_to = \
+            ico_date_range_from = \
+            ico_date_range_to = \
+            total_ico_date_range_from = \
+            total_ico_date_range_to = ''
+
         if pre_ico_date_range:
             pre_ico_date_range_from, pre_ico_date_range_to = dates_from_range(pre_ico_date_range)
+            total_ico_date_range_from, total_ico_date_range_to = pre_ico_date_range_from, pre_ico_date_range_to
 
         if ico_date_range:
             ico_date_range_from, ico_date_range_to = dates_from_range(ico_date_range)
+
+            if not pre_ico_date_range_from and ico_date_range_from:
+                total_ico_date_range_from = ico_date_range_from
+            if ico_date_range_to:
+                total_ico_date_range_to = ico_date_range_to
 
         return load_organization(response, XPATHS, context={
             'source': self.name,
@@ -87,4 +94,6 @@ class TrackicoSpider(scrapy.Spider):
             'pre_ico_date_range_to': pre_ico_date_range_to,
             'ico_date_range_from': ico_date_range_from,
             'ico_date_range_to': ico_date_range_to,
+            'total_ico_date_range_from': total_ico_date_range_from,
+            'total_ico_date_range_to': total_ico_date_range_to
         })

@@ -1,8 +1,10 @@
+from functools import partial
+
 import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join
 
-from crypto.utils import clear_text, unify_title, unify_website, strip
+from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format
 from w3lib.html import remove_tags
 
 
@@ -21,9 +23,11 @@ SOCIAL_LINK_BASES = {
 }
 
 
-def default_field():
+def default_field(extra=None):
+    if not extra:
+        extra = []
     return scrapy.Field(
-        input_processor=MapCompose(clear_text, strip),
+        input_processor=MapCompose(clear_text, strip, *extra),
         output_processor=TakeFirst()
     )
 
@@ -87,11 +91,6 @@ class Organization(scrapy.Item):
     raised_funds = default_field()
     softcap = default_field()
 
-    # dates
-    # ico_date_range = default_field()
-    # pre_ico_date_range = default_field()
-    # total_ico_date_range = default_field()
-
     # dates yyyy-mm-dd
     pre_ico_date_range_from = default_field()
     pre_ico_date_range_to = default_field()
@@ -102,11 +101,9 @@ class Organization(scrapy.Item):
     total_ico_date_range_from = default_field()
     total_ico_date_range_to = default_field()
 
-    # extra_dates (icoholder has different structure and can display variety of stages)
-    # last_stage_date_start = default_field()
-    # last_stage_date_end = default_field()
-    # last_stage_name = default_field()
-    # last_stage_status = default_field()
+    # (icoholder has different structure and can display variety of stages)
+    last_stage_name = default_field()
+    last_stage_status = default_field()
 
     # extra
     accepting = default_field()
@@ -142,29 +139,27 @@ class Organization(scrapy.Item):
     source = take_first_field()
 
 
-def join_dates_base_info(val):
-    return ' - '.join([v for v in val if v])
-
-
 class BaseInfoOrganization(Organization):
 
-    ico_date_range = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=join_dates_base_info,
-    )
+    date_processor = partial(to_common_format, original_formats=['%d.%m.%Y'])
 
+    ico_date_range_from = default_field(extra=[date_processor])
+    ico_date_range_to = default_field(extra=[date_processor])
 
-def join_dates_foundico(val):
-    return ' - '.join([v for v in val if v])  # TODO
+    total_ico_date_range_from = default_field(extra=[date_processor])
+    total_ico_date_range_to = default_field(extra=[date_processor])
 
 
 class FoundicoOrganization(Organization):
 
-    ico_date_range = scrapy.Field(
-        input_processor=MapCompose(clear_text),
-        output_processor=join_dates_base_info,
-    )
+    ico_date_range = scrapy.Field()
 
 
-# class TrackicoOrganization(Organization):
+class IcoholderOrganization(Organization):
+    date_processor = partial(to_common_format, original_formats=['%b %d, %Y', '%b, %Y'])
 
+    ico_date_range_from = default_field(extra=[date_processor])
+    ico_date_range_to = default_field(extra=[date_processor])
+
+    total_ico_date_range_from = default_field(extra=[date_processor])
+    total_ico_date_range_to = default_field(extra=[date_processor])
