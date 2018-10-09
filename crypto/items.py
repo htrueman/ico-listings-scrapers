@@ -88,15 +88,25 @@ class Organization(scrapy.Item):
     softcap = default_field()
 
     # dates
-    ico_date_range = default_field()
-    pre_ico_date_range = default_field()
-    total_ico_date_range = default_field()
+    # ico_date_range = default_field()
+    # pre_ico_date_range = default_field()
+    # total_ico_date_range = default_field()
+
+    # dates yyyy-mm-dd
+    pre_ico_date_range_from = default_field()
+    pre_ico_date_range_to = default_field()
+
+    ico_date_range_from = default_field()
+    ico_date_range_to = default_field()
+
+    total_ico_date_range_from = default_field()
+    total_ico_date_range_to = default_field()
 
     # extra_dates (icoholder has different structure and can display variety of stages)
-    last_stage_date_start = default_field()
-    last_stage_date_end = default_field()
-    last_stage_name = default_field()
-    last_stage_status = default_field()
+    # last_stage_date_start = default_field()
+    # last_stage_date_end = default_field()
+    # last_stage_name = default_field()
+    # last_stage_status = default_field()
 
     # extra
     accepting = default_field()
@@ -154,3 +164,7 @@ class FoundicoOrganization(Organization):
         input_processor=MapCompose(clear_text),
         output_processor=join_dates_base_info,
     )
+
+
+# class TrackicoOrganization(Organization):
+

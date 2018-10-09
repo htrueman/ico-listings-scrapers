@@ -1,6 +1,9 @@
+from datetime import datetime
+
 import scrapy
 
 from crypto.items import load_organization
+from crypto.utils import xpath_exract_first_text
 
 XPATHS = {
     # general
@@ -21,9 +24,9 @@ XPATHS = {
 
     # dates
     'PRE_ICO_DATE_RANGE': '//*[@class="main-container"]//table/'
-                          'tbody/tr[./th[contains(., "Pre-Sale")]]/child::td[1]/text()',
+                          'tbody/tr[./th[contains(., "Pre-Sale")]]/child::td[1]',
     'ICO_DATE_RANGE': '//*[@class="main-container"]//table/tbody'
-                      '/tr[./th[contains(., "Token Sale")]]/child::td[1]/text()',
+                      '/tr[./th[contains(., "Token Sale")]]/child::td[1]',
 
     # extra
     'ACCEPTING': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Accepting")]]/child::td[1]/text()',
@@ -38,7 +41,18 @@ XPATHS = {
                        'table/tbody/tr[./th[contains(., "Token for sale")]]/child::td[1]/text()',
     'WHITELIST': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Whitelist")]]/child::td[1]/text()',
 }
-MAX_PAGE = 164
+MAX_PAGE = 1
+
+
+def to_common_format(date):
+    try:
+        return datetime.strptime(date, '%m/%d/%Y').strftime('%Y-%m-%d')
+    except ValueError:
+        return ''
+
+
+def dates_from_range(date_range):
+    return (to_common_format(d.strip().split()[0]) for d in date_range.split('-'))
 
 
 class TrackicoSpider(scrapy.Spider):
@@ -57,4 +71,20 @@ class TrackicoSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-        return load_organization(response, XPATHS, context={'source': self.name})
+        pre_ico_date_range = xpath_exract_first_text(response, XPATHS['PRE_ICO_DATE_RANGE'])
+        ico_date_range = xpath_exract_first_text(response, XPATHS['ICO_DATE_RANGE'])
+
+        pre_ico_date_range_from, pre_ico_date_range_to, ico_date_range_from, ico_date_range_to = '', '', '', ''
+        if pre_ico_date_range:
+            pre_ico_date_range_from, pre_ico_date_range_to = dates_from_range(pre_ico_date_range)
+
+        if ico_date_range:
+            ico_date_range_from, ico_date_range_to = dates_from_range(ico_date_range)
+
+        return load_organization(response, XPATHS, context={
+            'source': self.name,
+            'pre_ico_date_range_from': pre_ico_date_range_from,
+            'pre_ico_date_range_to': pre_ico_date_range_to,
+            'ico_date_range_from': ico_date_range_from,
+            'ico_date_range_to': ico_date_range_to,
+        })
