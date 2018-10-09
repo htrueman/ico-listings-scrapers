@@ -40,7 +40,11 @@ XPATHS = {
     'SOFTCAP': '//tr[./td[contains(., "Soft cap")]]/child::td[3]/text()',
 
     # dates
-    'ICO_DATE_RANGE': '//div[contains(@class, "ico-calendar")]//text()',
+    'ICO_DATE_RANGE_FROM': '//div[@id="ico-start"]//text()',
+    'ICO_DATE_RANGE_TO': '//div[@id="ico-end"]//text()',
+
+    'TOTAL_ICO_DATE_RANGE_FROM': '//div[@id="ico-start"]//text()',
+    'TOTAL_ICO_DATE_RANGE_TO': '//div[@id="ico-end"]//text()',
 
     # extra
     'ACCEPTING': '//tr[./td[contains(., "Currencies")]]/child::td[3]/text()',

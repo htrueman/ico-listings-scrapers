@@ -2,7 +2,7 @@ from functools import partial
 
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import TakeFirst, MapCompose, Join
+from scrapy.loader.processors import TakeFirst, MapCompose, Join, Compose
 
 from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format
 from w3lib.html import remove_tags
@@ -29,6 +29,15 @@ def default_field(extra=None):
     return scrapy.Field(
         input_processor=MapCompose(clear_text, strip, *extra),
         output_processor=TakeFirst()
+    )
+
+
+def default_field_join(extra=None):
+    if not extra:
+        extra = []
+    return scrapy.Field(
+        input_processor=MapCompose(clear_text, strip),
+        output_processor=Compose(Join(separator=''), *extra)
     )
 
 
@@ -139,27 +148,34 @@ class Organization(scrapy.Item):
     source = take_first_field()
 
 
-class BaseInfoOrganization(Organization):
-
-    date_processor = partial(to_common_format, original_formats=['%d.%m.%Y'])
+class CustomDateOrganization(Organization):
+    original_formats = []
+    date_processor = partial(to_common_format, original_formats=original_formats)
 
     ico_date_range_from = default_field(extra=[date_processor])
     ico_date_range_to = default_field(extra=[date_processor])
 
     total_ico_date_range_from = default_field(extra=[date_processor])
     total_ico_date_range_to = default_field(extra=[date_processor])
+
+
+class BaseInfoOrganization(CustomDateOrganization):
+    original_formats = ['%d.%m.%Y']
+
+
+class IcoholderOrganization(CustomDateOrganization):
+    original_formats = ['%b %d, %Y', '%b, %Y']
 
 
 class FoundicoOrganization(Organization):
+    original_formats = ['%Y%b %dth']
 
-    ico_date_range = scrapy.Field()
+    date_processor = partial(to_common_format, original_formats=original_formats)
+
+    ico_date_range_from = default_field_join(extra=[date_processor])
+    ico_date_range_to = default_field_join(extra=[date_processor])
+
+    total_ico_date_range_from = default_field_join(extra=[date_processor])
+    total_ico_date_range_to = default_field_join(extra=[date_processor])
 
 
-class IcoholderOrganization(Organization):
-    date_processor = partial(to_common_format, original_formats=['%b %d, %Y', '%b, %Y'])
-
-    ico_date_range_from = default_field(extra=[date_processor])
-    ico_date_range_to = default_field(extra=[date_processor])
-
-    total_ico_date_range_from = default_field(extra=[date_processor])
-    total_ico_date_range_to = default_field(extra=[date_processor])
