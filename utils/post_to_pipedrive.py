@@ -57,15 +57,16 @@ class PostToPipedrive:
                         item_pattern = '{},\n'
                     f.write(item_pattern.format(json.dumps(org)))
 
+        print(orgs_file_name)
         ndo_file_name = MergeItems(orgs_file_name)
         ndo_clean_file_name = RemoveDuplicateItems(
             self.pipedrive_orgs_file_name, ndo_file_name).ndo_clean_file_name
         orgs = tablib.Dataset().load(open(ndo_clean_file_name).read())
         self.orgs_json = json.loads(orgs.export('json'))
 
-        deals_file_name = SpitDeals(ndo_clean_file_name).deals_file_name
-        deals = tablib.Dataset().load(open(deals_file_name).read())
-        self.deals_json = json.loads(deals.export('json'))
+        # deals_file_name = SpitDeals(ndo_clean_file_name).deals_file_name
+        # deals = tablib.Dataset().load(open(deals_file_name).read())
+        # self.deals_json = json.loads(deals.export('json'))
 
         # members = tablib.Dataset().load(open(members_file_name).read())
         # self.deals_json = json.loads(members.export('json'))
@@ -93,6 +94,8 @@ class PostToPipedrive:
 
     def main(self):
         for org_dict in self.orgs_json:
+            print(org_dict)
+            raise Exception
             pipedrive_org_dict = OrgFields(**org_dict).get_dict_with_pipedrive_api_field_names()
             response = requests.post(
                 self.base_path.format(item_type_plural='organizations', extra_params=''),

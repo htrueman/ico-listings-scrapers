@@ -43,6 +43,13 @@ class RemoveDuplicateItems:
                         new_orgs_json_clean.remove(new_org)
                         print(len(new_orgs_json_clean))
 
+        new_orgs_json_clean_prepared = []
+        for org in new_orgs_json_clean:
+            prepared_org = {}
+            for key, value in org.items():
+                prepared_org[getattr(OrgFields, key)] = value
+            new_orgs_json_clean_prepared.append(prepared_org)
+
         with open(self.ndo_clean_file_name, 'w+') as f:
             f.write(json.dumps(new_orgs_json_clean))
 

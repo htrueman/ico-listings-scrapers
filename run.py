@@ -16,10 +16,10 @@ runner = CrawlerRunner(settings)
 @defer.inlineCallbacks
 def crawl():
     yield runner.crawl('trackico')
-    yield runner.crawl('icobazaar')
-    yield runner.crawl('icoholder')
-    yield runner.crawl('baseinfo')
-    yield runner.crawl('foundico')
+    # yield runner.crawl('icobazaar')
+    # yield runner.crawl('icoholder')
+    # yield runner.crawl('baseinfo')
+    # yield runner.crawl('foundico')
     reactor.stop()
 
 
@@ -32,4 +32,4 @@ with open(output_file, 'w') as f:
     f.write(content.replace('\n][\n', ',\n'))
 
 print('crawled')
-# PostToPipedrive(orgs_file_name=output_file)
+PostToPipedrive(orgs_file_name=output_file)

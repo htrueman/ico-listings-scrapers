@@ -54,6 +54,7 @@ class OrgFields(PipedriveFieldsBase):
     address_postal_code = 'address_postal_code'
     address_formatted_address = 'address_formatted_address'
 
+    accepting = '3eaec68ea629a90b287dbc6f0690515d83f13351'
     site = '3a7ab4c4f128f0b4b3224cb9dbf1ac892fb04ff5'
     country = '0597db537f5942f12c5972b8b3c7eccc1257f021'
     pre_ico_date_range_from = '181de81c6261329bdceed27ed2efe448db432846'
