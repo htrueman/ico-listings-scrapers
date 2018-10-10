@@ -93,6 +93,8 @@ class OrgFields(PipedriveFieldsBase):
     instagram_link = '3db40cff6214eb767ab8b3f866de0bdb59a5644a'
     facebook_link = 'ca38eeb0c869b640ae2aa4679a63ea407c3874d3'
     telegram_link = '304903240d588419beeb7f88b1599056c5cc29be'
+    github_link = '1a79b4ba24b9d067ce0d5653671130dfb5203bf5'
+    slack_link = '086898afd6d1ef2fc54dfc74af18c46eac2a6a0b'
     pre_ico_date_start = '52714484f8a7222562c26213d66871eac010d103'
     pre_ico_date_end = '9b0d043091ecd2819de131bc77c44a70c3b6091e'
     start_date_of_ico_date_range = '2a333a658c44c0c1662bf602587c8348d40c21c5'
