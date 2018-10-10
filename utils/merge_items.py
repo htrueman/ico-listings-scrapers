@@ -4,18 +4,18 @@ import sys
 
 import tablib
 
+from constants import OrgFields
+
 
 class MergeItems:
     def __init__(self, imported_orgs_file_name=None, imported_members_file_name=None, *args, **kwargs):
         if not imported_orgs_file_name or not imported_members_file_name:
-            imported_orgs_file_name, imported_members_file_name = \
-                os.listdir('files_to_import')[0], os.listdir('files_to_import')[1]
+            imported_members_file_name = '/home/hevlich/Projects/crypto/files_to_import/people.csv'
 
         self.imported_organizations = tablib.Dataset(json.loads(open(imported_orgs_file_name).read()))
-        self.imported_members = tablib.Dataset(json.loads(open(imported_members_file_name).read()))
-
+        self.imported_members = tablib.Dataset().load(open(imported_members_file_name).read())
         self.organizations_file_name = 'non_duplicate_{}.json'.format(imported_orgs_file_name)
-        self.members_file_name = 'non_duplicate_{}.json'.format(imported_members_file_name)
+        self.members_file_name = 'non_duplicate_people.json'
 
         with open(self.members_file_name, 'w+') as f:
             f.write('')
@@ -37,8 +37,8 @@ class MergeItems:
 
         unique_members = []
         while len(members):
-            name_key = 'linkedin_link'
-            link_key = 'name'
+            name_key = 'Linkedin link'
+            link_key = 'Name'
             current = members.pop()
             rest_links = [m[link_key] for m in members]
             rest_names = [m[name_key] for m in members]
@@ -62,6 +62,7 @@ class MergeItems:
         merge = False
         for ndo_index, ndo_organization in enumerate(self.ndo_content):
             for content_key, content_value in ndo_organization.items():
+                content_key = getattr(OrgFields, content_key)
                 if content_key == 'site':
                     if organization[content_key] and organization[content_key] == content_value:
                         merge = True
@@ -102,12 +103,12 @@ class MergeItems:
 
     def make_merge(self):
         imported_members_json = json.loads(self.imported_members.export('json'))
-        imported_organizations_json = json.loads(self.imported_organizations.export('json'))
+        imported_organizations_json = json.loads(self.imported_organizations.export('json'))[0]
         merged_count = 0
 
         imported_total = len(imported_organizations_json)
 
-        mergeable_link_keys = [h for h in self.imported_organizations.headers
+        mergeable_link_keys = [h for h in imported_organizations_json[0].keys()
                                if 'link' in h and 'medium' not in h]
 
         for index, organization in enumerate(imported_organizations_json):

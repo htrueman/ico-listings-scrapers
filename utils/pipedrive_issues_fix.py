@@ -38,8 +38,8 @@ class PipedriveIssuesFix:
         self.main()
 
     def main(self):
-        self.move_address_field_to_site_field()
-        self.change_deals_owner_to_exrates()
+        # self.move_address_field_to_site_field()
+        # self.change_deals_owner_to_exrates()
         self.check_if_website_accessible()
 
     def move_address_field_to_site_field(self):
@@ -77,10 +77,11 @@ class PipedriveIssuesFix:
         for org_path in self.orgs_path_gen:
             pipedrive_orgs = requests.get(org_path)
             for org in pipedrive_orgs.json()['data']:
-                status_code = requests.get(org[getattr(OrgFields, 'site')]).status_code
-                if status_code >= 400:
+                try:
+                    status_code = requests.get(org[getattr(OrgFields, 'site')]).status_code
+                except:
                     org[getattr(OrgFields, 'name')] \
-                        = org[getattr(OrgFields, 'name')] + 'NOT ACCESSIBLE'
+                        = org[getattr(OrgFields, 'name')] + ' NOT ACCESSIBLE'
                     self.session.put(
                         self.base_put_path.format(
                             item_type_plural='organizations',

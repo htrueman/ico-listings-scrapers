@@ -63,6 +63,7 @@ def load_organization(response, xpaths, context=None, item_cls=None):
         if 'SOCIAL_LINK' in xpaths:
             for key, value in SOCIAL_LINK_BASES.items():
                 loader.add_xpath(key, xpaths['SOCIAL_LINK'].format(href_contains=value))
+        loader.add_value('raised_funds_usd_currency', 'USD')
 
         return loader.load_item()
 
@@ -95,9 +96,10 @@ class Organization(scrapy.Item):
 
     # statistics
     hardcap = default_field()
-    rating = default_field()
+    product_rating = default_field()
     number_of_tokens = default_field()
-    raised_funds = default_field()
+    raised_funds_usd_value = default_field()
+    raised_funds_usd_currency = scrapy.Field()
     softcap = default_field()
 
     # dates yyyy-mm-dd
@@ -111,13 +113,13 @@ class Organization(scrapy.Item):
     total_ico_date_range_to = default_field()
 
     # (icoholder has different structure and can display variety of stages)
-    last_stage_name = default_field()
-    last_stage_status = default_field()
+    # last_stage_name = default_field()
+    # last_stage_status = default_field()
 
     # extra
     accepting = default_field()
-    airdrop_program = default_field()
-    bounty_program = default_field()
+    # airdrop_program = default_field()
+    # bounty_program = default_field()
     bonus = scrapy.Field(
         input_processor=MapCompose(clear_text),
         output_processor=Join(separator='\n')
@@ -126,12 +128,12 @@ class Organization(scrapy.Item):
         input_processor=MapCompose(clear_text),
         output_processor=Join()
     )
-    goal = default_field()
-    has_mvp = default_field()
-    know_your_customer = default_field()
-    platform = default_field()
-    restricted_countries = default_field()
-    status = default_field()
+    # goal = default_field()
+    # has_mvp = default_field()
+    # know_your_customer = default_field()
+    # platform = default_field()
+    # restricted_countries = default_field()
+    # status = default_field()
     team_description = default_field()
     team_rating = default_field()
     token_bonus_available = default_field()
@@ -142,8 +144,8 @@ class Organization(scrapy.Item):
         output_processor=Join()
     )
     tokens_for_sale = default_field()
-    updated = default_field()
-    whitelist = default_field()
+    # updated = default_field()
+    # whitelist = default_field()
 
     source = take_first_field()
 

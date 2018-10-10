@@ -54,6 +54,7 @@ class OrgFields(PipedriveFieldsBase):
     address_postal_code = 'address_postal_code'
     address_formatted_address = 'address_formatted_address'
 
+    accepting = '3eaec68ea629a90b287dbc6f0690515d83f13351'
     site = '3a7ab4c4f128f0b4b3224cb9dbf1ac892fb04ff5'
     country = '0597db537f5942f12c5972b8b3c7eccc1257f021'
     pre_ico_date_range_from = '181de81c6261329bdceed27ed2efe448db432846'
@@ -92,6 +93,8 @@ class OrgFields(PipedriveFieldsBase):
     instagram_link = '3db40cff6214eb767ab8b3f866de0bdb59a5644a'
     facebook_link = 'ca38eeb0c869b640ae2aa4679a63ea407c3874d3'
     telegram_link = '304903240d588419beeb7f88b1599056c5cc29be'
+    github_link = '1a79b4ba24b9d067ce0d5653671130dfb5203bf5'
+    slack_link = '086898afd6d1ef2fc54dfc74af18c46eac2a6a0b'
     pre_ico_date_start = '52714484f8a7222562c26213d66871eac010d103'
     pre_ico_date_end = '9b0d043091ecd2819de131bc77c44a70c3b6091e'
     start_date_of_ico_date_range = '2a333a658c44c0c1662bf602587c8348d40c21c5'

@@ -51,9 +51,9 @@ XPATHS = {
     'AIRDROP_PROGRAM': '//tr[./td[contains(., "Airdrop program")]]/child::td[3]/text()',
     'BOUNTY_PROGRAM': '//tr[./td[contains(., "Bounty program")]]/child::td[3]/text()',
     'COUNTRY': '//tr[./td[contains(., "Location")]]/child::td[3]//text()',
-    'HAS_MVP': '//tr[./td[contains(., "Have working prototype")]]/child::td[3]/text()',
-    'KNOW_YOUR_CUSTOMER': '//tr[./td[contains(., "KYC of investors")]]/child::td[3]/text()',
-    'RESTRICTED_COUNTRIES': '//tr[./td[contains(., "Restricted areas")]]/child::td[3]/text()',
+    # 'HAS_MVP': '//tr[./td[contains(., "Have working prototype")]]/child::td[3]/text()',
+    # 'KNOW_YOUR_CUSTOMER': '//tr[./td[contains(., "KYC of investors")]]/child::td[3]/text()',
+    # 'RESTRICTED_COUNTRIES': '//tr[./td[contains(., "Restricted areas")]]/child::td[3]/text()',
     'TOKEN_PRICE': '//tr[./td[contains(., "Token price")]]/child::td[3]/text()',
     'TOKENS_FOR_SALE': '//tr[./td[contains(., "Tokens for sale")]]/child::td[3]/text()',
     'WHITELIST': '//tr[./td[contains(., "Whitelist of investors")]]/child::td[3]/text()'

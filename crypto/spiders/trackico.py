@@ -29,11 +29,11 @@ XPATHS = {
     # extra
     'ACCEPTING': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Accepting")]]/child::td[1]/text()',
     'BONUS': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Bonus")]]/child::td[1]/p/text()',
-    'KNOW_YOUR_CUSTOMER': '//*[@id="tab-financial"]//'
-                          'table/tbody/tr[./th[contains(., "Know Your Customer")]]/child::td[1]/text()',
-    'PLATFORM': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Platform")]]/child::td[1]/a/text()',
-    'RESTRICTED_COUNTRIES': '//*[@id="tab-financial"]//'
-                            'table/tbody/tr[./th[contains(., "Restricted countries")]]/child::td[1]/text()',
+    # 'KNOW_YOUR_CUSTOMER': '//*[@id="tab-financial"]//'
+    #                       'table/tbody/tr[./th[contains(., "Know Your Customer")]]/child::td[1]/text()',
+    # 'PLATFORM': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Platform")]]/child::td[1]/a/text()',
+    # 'RESTRICTED_COUNTRIES': '//*[@id="tab-financial"]//'
+    #                         'table/tbody/tr[./th[contains(., "Restricted countries")]]/child::td[1]/text()',
     'TOKEN_PRICE': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Token Price")]]/child::td[1]',
     'TOKENS_FOR_SALE': '//*[@id="tab-financial"]//'
                        'table/tbody/tr[./th[contains(., "Token for sale")]]/child::td[1]/text()',

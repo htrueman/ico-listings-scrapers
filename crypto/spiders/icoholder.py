@@ -37,11 +37,11 @@ XPATHS = {
     # extra
     'ACCEPTING': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Accepted Currencies")]]/text()',
     'DESCRIPTION': '//div[@class="description-value"]/text()',
-    'HAS_MVP': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "MVP/Prototype")]]/text()',
-    'KNOW_YOUR_CUSTOMER': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "KYC")]]/text()',
-    'PLATFORM': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Platform")]]/text()',
-    'RESTRICTED_COUNTRIES': '//div[contains(@class, "ico-more-info")]'
-                            '/*[div[contains(., "Restricted Countries")]]/text()',
+    # 'HAS_MVP': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "MVP/Prototype")]]/text()',
+    # 'KNOW_YOUR_CUSTOMER': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "KYC")]]/text()',
+    # 'PLATFORM': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Platform")]]/text()',
+    # 'RESTRICTED_COUNTRIES': '//div[contains(@class, "ico-more-info")]'
+    #                         '/*[div[contains(., "Restricted Countries")]]/text()',
     'TOKEN_DISTRIBUTION': '//div[contains(@class, "ico-more-info")]'
                           '/div[div[contains(., "Token Distribution")]]/div/text()',
     'TOKEN_NAME': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Ticker")]]/text()',
