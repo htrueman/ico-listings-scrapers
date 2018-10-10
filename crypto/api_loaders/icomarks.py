@@ -104,7 +104,7 @@ def main():
 
         loader.add_value('source', 'icomarks')
 
-        output.append(loader.load_item())
+        output.append(str(loader.load_item()))
     print(len(output))
     return output
 

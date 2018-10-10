@@ -15,17 +15,25 @@ runner = CrawlerRunner(settings)
 
 @defer.inlineCallbacks
 def crawl():
-    # yield runner.crawl('trackico')
+    yield runner.crawl('trackico')
     # yield runner.crawl('icobazaar')
     # yield runner.crawl('icoholder')
     # yield runner.crawl('baseinfo')
     # yield runner.crawl('foundico')
-    yield runner.crawl('icomarks_api')
     reactor.stop()
 
 
 crawl()
 reactor.run()
+
+
+# from crypto.api_loaders.icomarks import main as icomarks_main
+# icomarks_orgs = icomarks_main()
+# with open(output_file, 'a') as f:
+#     f.write('\n')
+#     f.write(json.dumps(icomarks_orgs))
+#     f.write('\n')
+
 
 with open(output_file, 'r') as f:
     content = f.read()
