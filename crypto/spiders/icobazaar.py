@@ -21,11 +21,11 @@ XPATHS = {
 
     # extra
     'DESCRIPTION': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/p/text()',
-    'GOAL': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/'
-            'div/div[span[contains(., "Goal")]]/child::span[2]/text()',
+    # 'GOAL': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/'
+    #         'div/div[span[contains(., "Goal")]]/child::span[2]/text()',
     'RATING': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div[2]/div[1]/text()',
-    'STATUS': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/'
-              'div[span[contains(., "Status")]]/child::span[2]/span/text()',
+    # 'STATUS': '/html/body/div[1]/main/div/div/div[2]/div[1]/div/div/'
+    #           'div[span[contains(., "Status")]]/child::span[2]/span/text()',
     'TOKEN_PRICE': '/html/body/div[1]/main/div/div/div[2]/div[1]/'
                    'div/div/div[span[contains(., "Price")]]/child::span[2]',
     'UPDATED': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span/text()',

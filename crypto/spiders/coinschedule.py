@@ -28,7 +28,7 @@ XPATHS = {
 
     # extra
     'DESCRIPTION': '//div[contains(@class, "project-description")]//text()',
-    'PLATFORM': '//ul/li/span[contains(., "Platform")]/following::span[1]/text()',
+    # 'PLATFORM': '//ul/li/span[contains(., "Platform")]/following::span[1]/text()',
 }
 
 
