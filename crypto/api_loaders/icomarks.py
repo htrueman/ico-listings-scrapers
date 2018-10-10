@@ -1,7 +1,6 @@
 import base64
 import collections
 import hmac
-from pprint import pprint
 from urllib.parse import urlencode, quote_plus
 
 
@@ -11,8 +10,8 @@ import time
 
 from scrapy.loader import ItemLoader
 
-from crypto.items import Organization
-
+from crypto.items import Organization, SOCIAL_LINK_BASES
+from crypto.utils import unify_title, unify_website
 
 PRIVATE_KEY = b'qEAKaFgIyMrFc1kcShDbP13QGst49w9XZ0dWE3E4fqP7dYeVkbou2OgbSC20u'
 PUBLIC_KEY = 'ahzTVzVTsQyVWKzs49QBc93nCmmPIIINFyau5nnSHPOn0YRWTREKgqgTEylXExG9'
@@ -40,7 +39,6 @@ def generate_url(path=PATH, params=None):
 def make_request(path, params):
     retries = 10
     for _ in range(retries):
-        print('Retrying: ', _)
         url = generate_url(path, params)
         res = requests.get(url)
         res_json = json.loads(res.content.decode())
@@ -67,24 +65,49 @@ def get_data():
 def main():
     output = []
     lst = get_data()
-    for i in lst[:10]:
+    total = len(lst)
+    for ind, i in enumerate(lst):
+        print('Icomarks: {} of {}'.format(ind, total))
         item = make_request(PATH1 + i['id'], {})
+
         loader = ItemLoader(item=Organization())
-        loader.add_value('name', item['name'])
-        loader.add_value('site', item['website'])
+        loader.add_value('name', unify_title(item['name']))
+        loader.add_value('site', unify_website(item['website']))
         loader.add_value('country', item['country'])
+        loader.add_value('whitepaper', item['country'])
+
+        for key, value in SOCIAL_LINK_BASES.items():
+            if item['social']:
+                k = [k for k in item['social'].keys() if item['social'][k] and value in item['social'][k]]
+                if len(k) == 1:
+                    loader.add_value(key, item['social'][k[0]])
+
+        loader.add_value('hardcap', item['hard.cap'])
+        loader.add_value('product_rating', item['rating'])
+        loader.add_value('number_of_tokens', item['total.tokens'])
+        loader.add_value('raised_funds_usd_value', item['raised'])
+        loader.add_value('softcap', item['soft.cap'])
+
+        loader.add_value('pre_ico_date_range_from', item['presale.start'])
+        loader.add_value('pre_ico_date_range_to', item['presale.end'])
+        loader.add_value('ico_date_range_from', item['main.start'])
+        loader.add_value('ico_date_range_to', item['main.end'])
+        loader.add_value('total_ico_date_range_from', item['presale.start'] or item['main.start'])
+        loader.add_value('total_ico_date_range_to', item['main.end'] or item['presale.end'])
+
+        loader.add_value('accepting', item['accepting'])
+        loader.add_value('bonus', item['bonus'])
+        loader.add_value('description', item['description'])
+        loader.add_value('token_name', item['ticker'])
+        loader.add_value('tokens_for_sale', item['available.for.sale'])
+        loader.add_value('token_price', item['main.price'] or item['presale.price'])
+
+        loader.add_value('source', 'icomarks')
+
         output.append(loader.load_item())
+    print(len(output))
+    return output
 
 
-
-main()
-
-# for item in data:
-#     loader = ItemLoader(item=Organization())
-#     loader.add_value('name', item['name'])
-#     output.append(loader.load_item())
-#     count += 1
-#     print(count)
-#
-# print(output)
-#
+if __name__ == '__main__':
+    main()
