@@ -96,7 +96,7 @@ class Organization(scrapy.Item):
 
     # statistics
     hardcap = default_field()
-    product_rating = default_field()
+    rating = default_field()
     number_of_tokens = default_field()
     raised_funds_usd_value = default_field()
     raised_funds_usd_currency = scrapy.Field()

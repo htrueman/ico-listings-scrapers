@@ -16,10 +16,10 @@ runner = CrawlerRunner(settings)
 @defer.inlineCallbacks
 def crawl():
     yield runner.crawl('trackico')
-    # yield runner.crawl('icobazaar')
-    # yield runner.crawl('icoholder')
-    # yield runner.crawl('baseinfo')
-    # yield runner.crawl('foundico')
+    yield runner.crawl('icobazaar')
+    yield runner.crawl('icoholder')
+    yield runner.crawl('baseinfo')
+    yield runner.crawl('foundico')
     reactor.stop()
 
 
