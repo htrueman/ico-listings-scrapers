@@ -61,6 +61,5 @@ def to_common_format(date, original_formats):
         try:
             return datetime.strptime(date, original_format).strftime('%Y-%m-%d')
         except ValueError:
-            print(date, original_format)
             continue
     return ''
