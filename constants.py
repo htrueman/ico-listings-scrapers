@@ -66,7 +66,7 @@ class OrgFields(PipedriveFieldsBase):
     ico_total_rating = 'd76d4c336cfbab7370427abba02d4a34f10adaac'
     team_rating = 'bd01c4bf0f2f1d6656d6ea6249a8f744a9332a14'
     vision_rating = 'bad5c31cbbcdc27b5cb26303107d98a726f0400c'
-    product_rating = 'ca80f495655efecb18bb631888702778b424dd8a'
+    rating = 'ca80f495655efecb18bb631888702778b424dd8a'
     profile_ration = '28a057442cb6c909834fee143db4f41cd572d88f'
     description = 'badfa76adf047269cf99ffa1df094c7516a32268'
     team_description = '43196c4b7b933bd1dbf4c8cacd19c524732cec85'
@@ -100,3 +100,4 @@ class OrgFields(PipedriveFieldsBase):
     start_date_of_ico_date_range = '2a333a658c44c0c1662bf602587c8348d40c21c5'
     tokens_for_sale = '7624affb4afec7c8566c446009d699ca3858349f'
     token_distribution = 'ef3fb9aabf598fd926241757d2a85cc552ba019d'
+    source = 'cf662033f1de587af4073914c7f756bcdb47721f'

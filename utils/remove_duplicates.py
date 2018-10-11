@@ -35,9 +35,8 @@ class RemoveDuplicateItems:
         new_orgs_json_clean = deepcopy(self.new_orgs_json)
         for new_index, new_org in enumerate(self.new_orgs_json):
             for old_index, old_org in enumerate(self.old_orgs_json):
-                if unify_title(old_org['name']).lower() == new_org['Name'].lower() \
-                        or unify_website(old_org[getattr(OrgFields, 'site')]) == new_org['Address']\
-                        or unify_website(old_org[getattr(OrgFields, 'address')]) == new_org['Address']:
+                if unify_title(old_org[getattr(OrgFields, 'name')]).lower() == new_org['name'].lower() \
+                        or unify_website(old_org[getattr(OrgFields, 'site')]) == new_org['site']:
 
                     if new_org in new_orgs_json_clean:
                         new_orgs_json_clean.remove(new_org)
