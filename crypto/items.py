@@ -4,7 +4,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join, Compose
 
-from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format
+from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format, clear_date
 from w3lib.html import remove_tags
 
 
@@ -51,7 +51,7 @@ def load_organization(response, xpaths, context=None, item_cls=None):
             item_cls = Organization
         loader = ItemLoader(item=item_cls(), response=response)
 
-        for field in Organization.fields:
+        for field in item_cls.fields:
             if 'link' not in field:
                 loader.add_xpath(field, xpaths.get(field.upper()))
 
@@ -150,9 +150,13 @@ class Organization(scrapy.Item):
     source = take_first_field()
 
 
-class CustomDateOrganization(Organization):
-    original_formats = []
+class BaseInfoOrganization(Organization):
+    original_formats = ['%d.%m.%Y']
+
     date_processor = partial(to_common_format, original_formats=original_formats)
+
+    pre_ico_date_range_from = default_field(extra=[date_processor])
+    pre_ico_date_range_to = default_field(extra=[date_processor])
 
     ico_date_range_from = default_field(extra=[date_processor])
     ico_date_range_to = default_field(extra=[date_processor])
@@ -161,18 +165,43 @@ class CustomDateOrganization(Organization):
     total_ico_date_range_to = default_field(extra=[date_processor])
 
 
-class BaseInfoOrganization(CustomDateOrganization):
-    original_formats = ['%d.%m.%Y']
-
-
-class IcoholderOrganization(CustomDateOrganization):
+class IcoholderOrganization(Organization):
     original_formats = ['%b %d, %Y', '%b, %Y']
+
+    date_processor = partial(to_common_format, original_formats=original_formats)
+
+    pre_ico_date_range_from = default_field(extra=[date_processor])
+    pre_ico_date_range_to = default_field(extra=[date_processor])
+
+    ico_date_range_from = default_field(extra=[date_processor])
+    ico_date_range_to = default_field(extra=[date_processor])
+
+    total_ico_date_range_from = default_field(extra=[date_processor])
+    total_ico_date_range_to = default_field(extra=[date_processor])
+
+
+class CoinscheduleOrganization(Organization):
+    original_formats = ['%B %-d %Y %H:%M UTC', '%B %d %Y %H:%M UTC', '%B %-d %Y', '%B %d %Y']
+
+    date_processor = partial(to_common_format, original_formats=original_formats)
+
+    pre_ico_date_range_from = default_field(extra=[clear_date, date_processor])
+    pre_ico_date_range_to = default_field(extra=[clear_date, date_processor])
+
+    ico_date_range_from = default_field(extra=[clear_date, date_processor])
+    ico_date_range_to = default_field(extra=[clear_date, date_processor])
+
+    total_ico_date_range_from = default_field(extra=[clear_date, date_processor])
+    total_ico_date_range_to = default_field(extra=[clear_date, date_processor])
 
 
 class FoundicoOrganization(Organization):
     original_formats = ['%Y%b %dth']
 
     date_processor = partial(to_common_format, original_formats=original_formats)
+
+    pre_ico_date_range_from = default_field_join(extra=[date_processor])
+    pre_ico_date_range_to = default_field_join(extra=[date_processor])
 
     ico_date_range_from = default_field_join(extra=[date_processor])
     ico_date_range_to = default_field_join(extra=[date_processor])
