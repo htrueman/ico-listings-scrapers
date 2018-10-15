@@ -97,9 +97,9 @@ class MergeItems:
 
         if not merge:
             self.ndo_content.append(organization)
-            members, imported_members_json = self.find_related_members(
-                imported_members_json, organization['name'])
-            self.write_members(members, self.members_file)
+            # members, imported_members_json = self.find_related_members(
+            #     imported_members_json, organization['name'])
+            # self.write_members(members, self.members_file)
 
     def make_merge(self):
         imported_members_json = json.loads(self.imported_members.export('json'))

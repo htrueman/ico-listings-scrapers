@@ -31,12 +31,28 @@ class RemoveDuplicateItems:
 
         self.main()
 
+    @staticmethod
+    # TODO: refactor
+    def get_sites(old_org, new_org):
+        try:
+            old_site = old_org[getattr(OrgFields, 'site')]
+        except KeyError:
+            old_site = old_org['site']
+
+        try:
+            new_site = new_org[getattr(OrgFields, 'site')]
+        except KeyError:
+            new_site = new_org['site']
+        return old_site, new_site
+
     def main(self):
         new_orgs_json_clean = deepcopy(self.new_orgs_json)
         for new_index, new_org in enumerate(self.new_orgs_json):
             for old_index, old_org in enumerate(self.old_orgs_json):
+                print(old_org, new_org)
+                old_site, new_site = self.get_sites(old_org, new_org)
                 if unify_title(old_org[getattr(OrgFields, 'name')]).lower() == new_org['name'].lower() \
-                        or unify_website(old_org[getattr(OrgFields, 'site')]) == new_org['site']:
+                        or unify_website(old_site) == new_site:
 
                     if new_org in new_orgs_json_clean:
                         new_orgs_json_clean.remove(new_org)

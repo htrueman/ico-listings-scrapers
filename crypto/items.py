@@ -99,7 +99,7 @@ class Organization(scrapy.Item):
     rating = default_field()
     number_of_tokens = default_field()
     raised_funds_usd_value = default_field()
-    raised_funds_usd_currency = scrapy.Field()
+    raised_funds_usd_currency = default_field()
     softcap = default_field()
 
     # dates yyyy-mm-dd
