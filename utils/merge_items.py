@@ -14,7 +14,7 @@ class MergeItems:
 
         self.imported_organizations = tablib.Dataset(json.loads(open(imported_orgs_file_name).read()))
         # self.imported_members = tablib.Dataset().load(open(imported_members_file_name).read())
-        self.organizations_file_name = 'non_duplicate_{}.json'.format(imported_orgs_file_name)
+        self.organizations_file_name = 'non_duplicate_{}'.format(imported_orgs_file_name)
         # self.members_file_name = 'non_duplicate_people.json'
 
         # with open(self.members_file_name, 'w+') as f:
