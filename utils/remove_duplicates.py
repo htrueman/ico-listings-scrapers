@@ -22,10 +22,9 @@ class RemoveDuplicateItems:
         self.new_orgs_file_name = new_orgs_file_name
 
         old_orgs = tablib.Dataset().load(open(self.old_orgs_file_name).read())
-        new_orgs = tablib.Dataset().load(open(self.new_orgs_file_name).read())
 
         self.old_orgs_json = json.loads(old_orgs.export('json'))
-        self.new_orgs_json = json.loads(new_orgs.export('json'))
+        self.new_orgs_json = json.loads(open(self.new_orgs_file_name).read())
 
         self.ndo_clean_file_name = '{}_clean.json'.format(self.new_orgs_file_name.split('.')[0])
 
