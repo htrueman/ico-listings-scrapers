@@ -61,8 +61,7 @@ class PostToPipedrive:
         ndo_file_name = MergeItems(orgs_file_name).organizations_file_name
         ndo_clean_file_name = RemoveDuplicateItems(
             self.pipedrive_orgs_file_name, ndo_file_name).ndo_clean_file_name
-        orgs = tablib.Dataset().load(open(ndo_clean_file_name).read())
-        self.orgs_json = json.loads(orgs.export('json'))
+        self.orgs_json = json.loads(open(ndo_clean_file_name).read())
 
         # deals_file_name = SpitDeals(ndo_clean_file_name).deals_file_name
         # deals = tablib.Dataset().load(open(deals_file_name).read())
