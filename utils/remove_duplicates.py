@@ -33,25 +33,30 @@ class RemoveDuplicateItems:
 
     @staticmethod
     # TODO: refactor
-    def get_sites(old_org, new_org):
+    def get_sites(old_org, new_org, arg_type='site'):
         try:
-            old_site = old_org[getattr(OrgFields, 'site')]
+            old_site = old_org[getattr(OrgFields, arg_type)]
         except KeyError:
-            old_site = old_org['site']
-
+            try:
+                old_site = old_org[arg_type]
+            except KeyError:
+                old_site = ''
         try:
-            new_site = new_org[getattr(OrgFields, 'site')]
+            new_site = new_org[getattr(OrgFields, arg_type)]
         except KeyError:
-            new_site = new_org['site']
+            try:
+                new_site = new_org[arg_type]
+            except KeyError:
+                new_site = ''
         return old_site, new_site
 
     def main(self):
         new_orgs_json_clean = deepcopy(self.new_orgs_json)
         for new_index, new_org in enumerate(self.new_orgs_json):
             for old_index, old_org in enumerate(self.old_orgs_json):
-                print(old_org, new_org)
                 old_site, new_site = self.get_sites(old_org, new_org)
-                if unify_title(old_org[getattr(OrgFields, 'name')]).lower() == new_org['name'].lower() \
+                old_name, new_name = self.get_sites(old_org, new_org, arg_type='name')
+                if unify_title(old_name).lower() == new_name.lower() \
                         or unify_website(old_site) == new_site:
 
                     if new_org in new_orgs_json_clean:
