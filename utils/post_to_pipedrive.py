@@ -88,8 +88,9 @@ class PostToPipedrive:
 
         pipeline_id = 3
         for date_str in [ico_date_range_to, total_ico_date_range_to, pre_ico_date_range_to]:
-            if datetime.datetime.strptime(date_str, '%Y-%m-%d') <= datetime.datetime.now():
-                pipeline_id = 1
+            if date_str:
+                if datetime.datetime.strptime(date_str, '%Y-%m-%d') <= datetime.datetime.now():
+                    pipeline_id = 1
         return pipeline_id
 
     def main(self):
