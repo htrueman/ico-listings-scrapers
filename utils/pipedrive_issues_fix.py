@@ -2,7 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from constants import OrgFields
+from utils.constants import OrgFields
 from utils.post_to_pipedrive import get_base_full_path
 
 
@@ -76,12 +76,29 @@ class PipedriveIssuesFix:
     def check_if_website_accessible(self):
         for org_path in self.orgs_path_gen:
             pipedrive_orgs = requests.get(org_path)
+            org_to_delete_ids = []
             for org in pipedrive_orgs.json()['data']:
-                try:
-                    status_code = requests.get(org[getattr(OrgFields, 'site')]).status_code
-                except:
-                    org[getattr(OrgFields, 'name')] \
-                        = org[getattr(OrgFields, 'name')] + ' NOT ACCESSIBLE'
+                has_changes = False
+                if org[getattr(OrgFields, 'site')] and 'icobench' not in org[getattr(OrgFields, 'site')]:
+                    if 'https' not in org[getattr(OrgFields, 'site')] and 'http' not in org[getattr(OrgFields, 'site')]:
+                        org[getattr(OrgFields, 'site')] = 'https://' + org[getattr(OrgFields, 'site')] + '/'
+                        has_changes = True
+                    try:
+                        response = requests.get(org[getattr(OrgFields, 'site')])
+                    except Exception:
+                        print('connection error ', org[getattr(OrgFields, 'site')])
+                    print(org[getattr(OrgFields, 'site')], org[getattr(OrgFields, 'name')], str(response.status_code))
+                    if response.status_code >= 400:
+                        org_to_delete_ids.append(str(org['id']))
+                        print('deleted')
+                        self.session.delete(
+                            self.base_path.format(item_type_plural='organizations', extra_params=''),
+                            json=','.join(org_to_delete_ids)
+                        )
+                if has_changes:
+                    with open('pipedrive_issues_fix_logs.txt', 'a+') as f:
+                        f.write('{} {} {}'.format(
+                            org[getattr(OrgFields, 'site')], org[getattr(OrgFields, 'name')], str(response.status_code)))
                     self.session.put(
                         self.base_put_path.format(
                             item_type_plural='organizations',

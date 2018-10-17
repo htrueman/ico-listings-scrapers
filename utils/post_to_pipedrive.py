@@ -2,13 +2,11 @@ import json
 import datetime
 from math import ceil
 
-import tablib
 import requests
 
-from constants import OrgFields
+from utils.constants import OrgFields
 from utils.merge_items import MergeItems
 from utils.remove_duplicates import RemoveDuplicateItems
-from utils.split_between_pipelines import SpitDeals
 
 
 def get_base_full_path(base_path, pipedrive_get_step, item_type_plural):

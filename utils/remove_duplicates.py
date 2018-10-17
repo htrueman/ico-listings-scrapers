@@ -4,7 +4,7 @@ from copy import deepcopy
 
 import tablib
 
-from constants import OrgFields
+from utils.constants import OrgFields
 from crypto.utils import unify_title, unify_website
 
 

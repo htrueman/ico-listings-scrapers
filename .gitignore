@@ -76,3 +76,4 @@ local_settings.py
 data/
 
 files_to_process
+.DS_Store
