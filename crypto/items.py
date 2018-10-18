@@ -4,7 +4,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join, Compose
 
-from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format, clear_date
+from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format, clear_date, skip_date
 from w3lib.html import remove_tags
 
 
@@ -64,6 +64,7 @@ def load_organization(response, xpaths, context=None, item_cls=None):
             for key, value in SOCIAL_LINK_BASES.items():
                 loader.add_xpath(key, xpaths['SOCIAL_LINK'].format(href_contains=value))
         loader.add_value('raised_funds_usd_currency', 'USD')
+        loader.add_value('is_parsed', 'true')
 
         return loader.load_item()
 
@@ -134,6 +135,9 @@ class Organization(scrapy.Item):
     # platform = default_field()
     # restricted_countries = default_field()
     # status = default_field()
+    product_rating = default_field()
+    profile_rating = default_field()
+    vision_rating = default_field()
     team_description = default_field()
     team_rating = default_field()
     token_bonus_available = default_field()
@@ -148,6 +152,7 @@ class Organization(scrapy.Item):
     # whitelist = default_field()
 
     source = take_first_field()
+    is_parsed = default_field()
 
 
 class BaseInfoOrganization(Organization):
@@ -210,3 +215,16 @@ class FoundicoOrganization(Organization):
     total_ico_date_range_to = default_field_join(extra=[date_processor])
 
 
+class IcobenchOrganization(Organization):
+    original_formats = ['%Y-%m-%d %H:%M:%S']
+
+    date_processor = partial(to_common_format, original_formats=original_formats)
+
+    pre_ico_date_range_from = default_field_join(extra=[skip_date, date_processor])
+    pre_ico_date_range_to = default_field_join(extra=[skip_date, date_processor])
+
+    ico_date_range_from = default_field_join(extra=[skip_date, date_processor])
+    ico_date_range_to = default_field_join(extra=[skip_date, date_processor])
+
+    total_ico_date_range_from = default_field_join(extra=[skip_date, date_processor])
+    total_ico_date_range_to = default_field_join(extra=[skip_date, date_processor])
