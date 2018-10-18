@@ -52,6 +52,10 @@ def strip(string):
     return string.strip()
 
 
+def clear_date(date):
+    return date.replace('th', '').replace('st', '').replace('nd', '').replace('rd', '').replace('Augu ', 'August ')
+
+
 def to_common_format(date, original_formats):
     for original_format in original_formats:
         try:

@@ -44,10 +44,13 @@ MAX_PAGE = 164
 
 
 def dates_from_range(date_range):
-    return (
-        to_common_format(d.strip().split()[0], ['%m/%d/%Y'])
-        for d in date_range.split('-')
-    )
+    if '-' in date_range:
+        return (
+            to_common_format(d.strip().split()[0], ['%m/%d/%Y'])
+            for d in date_range.split('-')
+        )
+    else:
+        return to_common_format(date_range.strip().split()[0], ['%m/%d/%Y']), ''
 
 
 class TrackicoSpider(scrapy.Spider):

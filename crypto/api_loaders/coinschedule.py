@@ -1,3 +1,5 @@
+# NOT USED, NOT FINISHED, HAVE PARSER INSTEAD
+
 import json
 
 import requests

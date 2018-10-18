@@ -1,6 +1,6 @@
 import scrapy
 
-from crypto.items import load_organization
+from crypto.items import load_organization, CoinscheduleOrganization
 
 
 class CoinscheduleBaseSpider(scrapy.Spider):
@@ -50,46 +50,51 @@ class CoinscheduleSpider(CoinscheduleBaseSpider):
         has_pre_ico = bool(date_selector.xpath('//ul/li/a[contains(., "Pre")]/text()')
                                         .extract_first())
 
-        pre_ico_date_range = None
-        ico_date_range = None
+        pre_ico_date_range_from = \
+            pre_ico_date_range_to = \
+            ico_date_range_from = \
+            ico_date_range_to = ''
 
         # TODO: refactor
         if has_tabs:
             if response.xpath('//div[contains(@class, "event-tabs")]/ul'
                               '/li[@class="active"]/a[contains(., "Pre")]/text()').extract_first():
-                pre_ico_date_range = ' - '.join([
-                    self.get_date(date_selector, '', 'Start'),
-                    self.get_date(date_selector, '', 'End')
-                ])
+                pre_ico_date_range_from = self.get_date(date_selector, '', 'Start')
+                pre_ico_date_range_to = self.get_date(date_selector, '', 'End')
 
-                ico_date_range = ' - '.join([
-                    self.get_date(date_selector, 'not', 'Start'),
-                    self.get_date(date_selector, 'not', 'End')
-                ])
+                ico_date_range_from = self.get_date(date_selector, 'not', 'Start'),
+                ico_date_range_to = self.get_date(date_selector, 'not', 'End'),
+
             else:
-                pre_ico_date_range = ' - '.join([
-                    self.get_date(date_selector, 'not', 'Start'),
-                    self.get_date(date_selector, 'not', 'End')
-                ])
+                pre_ico_date_range_from = self.get_date(date_selector, 'not', 'Start')
+                pre_ico_date_range_to = self.get_date(date_selector, 'not', 'End')
 
-                ico_date_range = ' - '.join([
-                    self.get_date(date_selector, '', 'Start'),
-                    self.get_date(date_selector, '', 'End')
-                ])
+                ico_date_range_from = self.get_date(date_selector, '', 'Start')
+                ico_date_range_to = self.get_date(date_selector, '', 'End')
+
+            total_ico_date_range_from = pre_ico_date_range_from
+            total_ico_date_range_to = ico_date_range_to
 
         elif has_pre_ico:
-            pre_ico_date_range = ' - '.join([
-                self.get_date(date_selector, '', 'Start'),
-                self.get_date(date_selector, '', 'End')
-            ])
+            pre_ico_date_range_from = self.get_date(date_selector, '', 'Start')
+            pre_ico_date_range_to = self.get_date(date_selector, '', 'End')
+
+            total_ico_date_range_from = pre_ico_date_range_from
+            total_ico_date_range_to = pre_ico_date_range_to
+
         else:
-            ico_date_range = ' - '.join([
-                self.get_date(date_selector, '', 'Start'),
-                self.get_date(date_selector, '', 'End')
-            ])
+            ico_date_range_from = self.get_date(date_selector, '', 'Start')
+            ico_date_range_to = self.get_date(date_selector, '', 'End')
+
+            total_ico_date_range_from = ico_date_range_from
+            total_ico_date_range_to = ico_date_range_to
 
         return load_organization(response, XPATHS, context={
             'source': self.name,
-            'pre_ico_date_range': pre_ico_date_range,
-            'ico_date_range': ico_date_range,
-        })
+            'pre_ico_date_range_from': pre_ico_date_range_from,
+            'pre_ico_date_range_to': pre_ico_date_range_to,
+            'ico_date_range_from': ico_date_range_from,
+            'ico_date_range_to': ico_date_range_to,
+            'total_ico_date_range_from': total_ico_date_range_from,
+            'total_ico_date_range_to': total_ico_date_range_to,
+        }, item_cls=CoinscheduleOrganization)
