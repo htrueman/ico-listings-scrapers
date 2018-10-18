@@ -76,29 +76,38 @@ class PipedriveIssuesFix:
     def check_if_website_accessible(self):
         for org_path in self.orgs_path_gen:
             pipedrive_orgs = requests.get(org_path)
-            org_to_delete_ids = []
             for org in pipedrive_orgs.json()['data']:
                 has_changes = False
                 if org[getattr(OrgFields, 'site')] and 'icobench' not in org[getattr(OrgFields, 'site')]:
-                    if 'https' not in org[getattr(OrgFields, 'site')] and 'http' not in org[getattr(OrgFields, 'site')]:
+                    if not ('https' in org[getattr(OrgFields, 'site')] or 'http' in org[getattr(OrgFields, 'site')]):
                         org[getattr(OrgFields, 'site')] = 'https://' + org[getattr(OrgFields, 'site')] + '/'
+                        has_changes = True
+                    elif 'https' in org[getattr(OrgFields, 'site')] and 'http' in org[getattr(OrgFields, 'site')]:
+                        org[getattr(OrgFields, 'site')] = org[getattr(OrgFields, 'site')].replace('http://', '')
                         has_changes = True
                     try:
                         response = requests.get(org[getattr(OrgFields, 'site')])
+                        if response.status_code >= 400 and org['owner_name'] == 'Vadym Hevlich':
+                            d = self.session.delete(
+                                self.base_put_path.format(
+                                    item_type_plural='organizations',
+                                    id=org['id'])
+                            )
+                            has_changes = False
+                            print('deleted', d.status_code)
+                            print(org[getattr(OrgFields, 'site')], org[getattr(OrgFields, 'name')], str(response.status_code))
                     except Exception:
-                        print('connection error ', org[getattr(OrgFields, 'site')])
-                    print(org[getattr(OrgFields, 'site')], org[getattr(OrgFields, 'name')], str(response.status_code))
-                    if response.status_code >= 400:
-                        org_to_delete_ids.append(str(org['id']))
-                        print('deleted')
-                        self.session.delete(
-                            self.base_path.format(item_type_plural='organizations', extra_params=''),
-                            json=','.join(org_to_delete_ids)
-                        )
+                        if org['owner_name'] == 'Vadym Hevlich':
+                            print('connection error ', org[getattr(OrgFields, 'site')])
+                            d = self.session.delete(
+                                self.base_put_path.format(
+                                    item_type_plural='organizations',
+                                    id=org['id'])
+                            )
+                            has_changes = False
+                            print('deleted', d.status_code)
                 if has_changes:
-                    with open('pipedrive_issues_fix_logs.txt', 'a+') as f:
-                        f.write('{} {} {}'.format(
-                            org[getattr(OrgFields, 'site')], org[getattr(OrgFields, 'name')], str(response.status_code)))
+                    print(org[getattr(OrgFields, 'site')])
                     self.session.put(
                         self.base_put_path.format(
                             item_type_plural='organizations',
