@@ -103,6 +103,7 @@ def main():
         loader.add_value('token_price', item['main.price'] or item['presale.price'])
 
         loader.add_value('source', 'icomarks')
+        loader.add_value('is_parsed', 'false')
 
         output.append(loader.load_item())
     return output

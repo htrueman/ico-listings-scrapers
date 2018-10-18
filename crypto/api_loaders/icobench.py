@@ -96,6 +96,9 @@ def main():
         loader.add_value('token_name', finance['token'])
         loader.add_value('token_price', finance['price'])
 
+        loader.add_value('source', 'icobench')
+        loader.add_value('is_parsed', 'false')
+
         data.append(loader.load_item())
 
     return data

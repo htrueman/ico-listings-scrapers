@@ -64,6 +64,7 @@ def load_organization(response, xpaths, context=None, item_cls=None):
             for key, value in SOCIAL_LINK_BASES.items():
                 loader.add_xpath(key, xpaths['SOCIAL_LINK'].format(href_contains=value))
         loader.add_value('raised_funds_usd_currency', 'USD')
+        loader.add_value('is_parsed', 'true')
 
         return loader.load_item()
 
@@ -151,6 +152,7 @@ class Organization(scrapy.Item):
     # whitelist = default_field()
 
     source = take_first_field()
+    is_parsed = default_field()
 
 
 class BaseInfoOrganization(Organization):
