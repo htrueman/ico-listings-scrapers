@@ -74,7 +74,7 @@ def main():
         loader.add_value('name', unify_title(item['name']))
         loader.add_value('site', unify_website(item['website']))
         loader.add_value('country', item['country'])
-        loader.add_value('whitepaper', item['country'])
+        loader.add_value('whitepaper', item['whitepaper'])
 
         for key, value in SOCIAL_LINK_BASES.items():
             if item['social']:

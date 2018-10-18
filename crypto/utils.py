@@ -45,7 +45,7 @@ def unify_website(website):
 
 
 def clear_text(value):
-    return value.replace('\n', '').replace('\t', '')
+    return str(value).replace('\n', '').replace('\t', '')
 
 
 def strip(string):
@@ -54,6 +54,10 @@ def strip(string):
 
 def clear_date(date):
     return date.replace('th', '').replace('st', '').replace('nd', '').replace('rd', '').replace('Augu ', 'August ')
+
+
+def skip_date(date):
+    return None if date == '0000-00-00 00:00:00' else date
 
 
 def to_common_format(date, original_formats):

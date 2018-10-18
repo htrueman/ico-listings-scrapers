@@ -6,6 +6,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapy.utils.log import configure_logging
 
 from crypto.api_loaders.icomarks import main as icomarks_main
+from crypto.api_loaders.icobench import main as icobench_main
 from utils.post_to_pipedrive import PostToPipedrive
 
 
@@ -29,13 +30,13 @@ def crawl():
     reactor.stop()
 
 
-def load_icomarks(output_file=OUTPUT_FILE):
-    icomarks_orgs = icomarks_main()
+def load_api(main_func, output_file=OUTPUT_FILE):
+    orgs = main_func()
     with open(output_file, 'a') as f:
         f.write('[\n')
-        for i, icomarks_org in enumerate(icomarks_orgs):
-            f.write(json.dumps(dict(icomarks_org)))
-            f.write("\n]" if i == len(icomarks_orgs) - 1 else ",\n")
+        for i, org in enumerate(orgs):
+            f.write(json.dumps(dict(org)))
+            f.write("\n]" if i == len(orgs) - 1 else ",\n")
 
 
 def repaire_file(output_file=OUTPUT_FILE):
@@ -49,7 +50,8 @@ if __name__ == '__main__':
     crawl()
     reactor.run()
 
-    load_icomarks()
+    load_api(icomarks_main)
+    load_api(icobench_main)
 
     repaire_file()
 
