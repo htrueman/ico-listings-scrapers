@@ -117,20 +117,20 @@ class PipedriveIssuesFix:
                         json=org
                     )
 
-    # def delete_old_orgs(self):
-    #     for deal_path in self.deal_path_gen:
-    #         pipedrive_deals = requests.get(deal_path)
-    #         for deal in pipedrive_deals.json()['data']:
-    #             print(deal['creator_user_id']['name'])
-    #             if deal['creator_user_id']['name'] == 'Vadym Hevlich':
-    #                 note_path_gen = get_base_full_path(
-    #                     self.base_path,
-    #                     self.pipedrive_get_step,
-    #                     'notes'
-    #                 )
-    #                 for note_path in note_path_gen:
-    #                     pipedrive_notes = requests.get(note_path)
-    #                     print(pipedrive_notes)
+    def delete_old_orgs(self):
+        for deal_path in self.deal_path_gen:
+            pipedrive_deals = requests.get(deal_path)
+            for deal in pipedrive_deals.json()['data']:
+                if deal['creator_user_id']['name'] == 'Vadym Hevlich':
+                    note_path_gen = get_base_full_path(
+                        self.base_path,
+                        self.pipedrive_get_step,
+                        'notes'
+                    )
+                    for note_path in note_path_gen:
+                        print(note_path)
+                        pipedrive_notes = requests.get(note_path)
+                        print(pipedrive_notes)
 
 
 if __name__ == '__main__':
