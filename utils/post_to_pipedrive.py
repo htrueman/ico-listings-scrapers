@@ -13,12 +13,24 @@ def get_base_full_path(base_path, pipedrive_get_step, item_type_plural):
     base_get_path = base_path.format(
         item_type_plural=item_type_plural,
         extra_params='&start={start}&limit=100&get_summary={get_summary}')
-    pipedrive_orgs = requests.get(base_get_path.format(start=0, get_summary=1))
+    if item_type_plural == 'notes':
+        more_items_in_collection = True
+        next_start = 0
+        print('here')
+        while more_items_in_collection:
+            pipedrive_notes = requests.get(base_get_path.format(start=next_start, get_summary=1))
+            next_start += pipedrive_notes.json()['additional_data']['next_start']
+            print(pipedrive_notes)
+            if 'more_items_in_collection' \
+                    in pipedrive_notes.json()['additional_data']['pagination'].keys():
+                more_items_in_collection = False
+    else:
+        pipedrive_orgs = requests.get(base_get_path.format(start=0, get_summary=1))
 
-    page_count = ceil(pipedrive_orgs.json()['additional_data']['summary']['total_count'] / 100)
-    for i in range(page_count):
-        next_start = i * pipedrive_get_step
-        yield base_get_path.format(start=next_start, get_summary=0)
+        page_count = ceil(pipedrive_orgs.json()['additional_data']['summary']['total_count'] / 100)
+        for i in range(page_count):
+            next_start = i * pipedrive_get_step
+            yield base_get_path.format(start=next_start, get_summary=0)
 
 
 class PostToPipedrive:
@@ -70,24 +82,35 @@ class PostToPipedrive:
 
         self.main()
 
+    # @staticmethod
+    # def get_deal_pipeline(org):
+    #     """
+    #     Get deal pipeline by organization ICO date.
+    #     All deals are splitted between '2-ico-in-progress' and '3-ico-finished' pipelines.
+    #     """
+    #     # 3-ico-finished : id = 3
+    #     # 2-ico-in-progress : id = 1
+    #
+    #     ico_date_range_to = org.get(getattr(OrgFields, 'ico_date_range_to'))
+    #     total_ico_date_range_to = org.get(getattr(OrgFields, 'total_ico_date_range_to'))
+    #     pre_ico_date_range_to = org.get(getattr(OrgFields, 'pre_ico_date_range_to'))
+    #
+    #     pipeline_id = 3
+    #     for date_str in [ico_date_range_to, total_ico_date_range_to, pre_ico_date_range_to]:
+    #         if date_str:
+    #             if datetime.datetime.strptime(date_str, '%Y-%m-%d') <= datetime.datetime.now():
+    #                 pipeline_id = 1
+    #     return pipeline_id
+
     @staticmethod
     def get_deal_pipeline(org):
-        """
-        Get deal pipeline by organization ICO date.
-        All deals are splitted between '2-ico-in-progress' and '3-ico-finished' pipelines.
-        """
-        # 3-ico-finished : id = 3
-        # 2-ico-in-progress : id = 1
-
-        ico_date_range_to = org.get(getattr(OrgFields, 'ico_date_range_to'))
-        total_ico_date_range_to = org.get(getattr(OrgFields, 'total_ico_date_range_to'))
-        pre_ico_date_range_to = org.get(getattr(OrgFields, 'pre_ico_date_range_to'))
-
-        pipeline_id = 3
-        for date_str in [ico_date_range_to, total_ico_date_range_to, pre_ico_date_range_to]:
-            if date_str:
-                if datetime.datetime.strptime(date_str, '%Y-%m-%d') <= datetime.datetime.now():
-                    pipeline_id = 1
+        # 2-ico - API: id = 5
+        # 3-ico - parsing: id = 6
+        is_parsed = org.pop('is_parsed')
+        if is_parsed == 'true':
+            pipeline_id = 6
+        else:
+            pipeline_id = 5
         return pipeline_id
 
     def main(self):
