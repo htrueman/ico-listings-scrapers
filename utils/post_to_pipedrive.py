@@ -15,18 +15,17 @@ def get_base_full_path(base_path, pipedrive_get_step, item_type_plural):
         extra_params='&start={start}&limit=100&get_summary={get_summary}')
     if item_type_plural == 'notes':
         more_items_in_collection = True
-        next_start = 0
+        next_notes_start = 0
 
         while more_items_in_collection:
-            pipedrive_notes = requests.get(base_get_path.format(start=next_start, get_summary=1))
-            if not next_start:
-                yield base_get_path.format(start=next_start, get_summary=0)
-            if not pipedrive_notes.json()['additional_data']['pagination']['more_items_in_collection']:
-                more_items_in_collection = False
-            else:
-                next_start += pipedrive_notes.json()['additional_data']['pagination']['next_start']
-            if next_start:
-                yield base_get_path.format(start=next_start, get_summary=0)
+            yield base_get_path.format(start=next_notes_start, get_summary=0)
+
+            pipedrive_notes = requests.get(base_get_path.format(start=next_notes_start, get_summary=1))
+
+            more_items_in_collection = pipedrive_notes\
+                .json()['additional_data']['pagination']['more_items_in_collection']
+            if more_items_in_collection:
+                next_notes_start += pipedrive_get_step
     else:
         pipedrive_orgs = requests.get(base_get_path.format(start=0, get_summary=1))
 

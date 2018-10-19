@@ -118,19 +118,41 @@ class PipedriveIssuesFix:
                     )
 
     def delete_old_orgs(self):
+        pipedrive_notes = []
+        note_path_gen = get_base_full_path(
+            self.base_path,
+            self.pipedrive_get_step,
+            'notes'
+        )
+        for note_path in note_path_gen:
+            pipedrive_notes.extend(requests.get(note_path).json()['data'])
+        org_ids_to_not_delete = list(map(lambda n: n['org_id'], pipedrive_notes))
+        deal_ids_to_not_delete = list(map(lambda n: n['deal_id'], pipedrive_notes))
+        print(deal_ids_to_not_delete)
+
         for deal_path in self.deal_path_gen:
             pipedrive_deals = requests.get(deal_path)
-            for deal in pipedrive_deals.json()['data']:
-                if deal['creator_user_id']['name'] == 'Vadym Hevlich':
-                    note_path_gen = get_base_full_path(
-                        self.base_path,
-                        self.pipedrive_get_step,
-                        'notes'
-                    )
-                    for note_path in note_path_gen:
-                        print(note_path)
-                        pipedrive_notes = requests.get(note_path)
-                        print(pipedrive_notes)
+            if pipedrive_deals.json():
+                for deal in pipedrive_deals.json()['data']:
+                    if deal['creator_user_id']['name'] == 'Vadym Hevlich' and deal['id'] not in deal_ids_to_not_delete:
+                        deal_r = self.session.delete(
+                            self.base_put_path.format(
+                                item_type_plural='deals',
+                                id=deal['id'])
+                        )
+                        print('deal ', deal_r, deal['id'])
+
+        for org_path in self.orgs_path_gen:
+            pipedrive_orgs = requests.get(org_path)
+            if pipedrive_orgs.json():
+                for org in pipedrive_orgs.json()['data']:
+                    if org['id'] not in org_ids_to_not_delete:
+                        org_r = self.session.delete(
+                            self.base_put_path.format(
+                                item_type_plural='deals',
+                                id=org['id'])
+                        )
+                        print('org ', org_r, org['id'])
 
 
 if __name__ == '__main__':
