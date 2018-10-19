@@ -1,6 +1,8 @@
 import base64
 import hmac
 import json
+from pprint import pprint
+
 import requests
 
 from scrapy.loader import ItemLoader
@@ -44,8 +46,12 @@ def main():
     max_page = res['pages']
     output = res['results']
     for page in range(1, max_page + 1):
-        output.extend(make_request(PATH, {'page': page})['results'])
-        print('Icobench page{}/{}'.format(page, max_page))
+        try:
+            output.extend(make_request(PATH, {'page': page})['results'])
+            print('Icobench page {}/{}'.format(page, max_page))
+        except KeyError:
+            continue
+
     total = len(output)
     data = []
     for i, item in enumerate(output):
