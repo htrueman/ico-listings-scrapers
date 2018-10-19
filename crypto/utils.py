@@ -39,7 +39,8 @@ def unify_title(title):
 def unify_website(website):
     try:
         extracted = tldextract.extract(website)
-        return '{}.{}'.format(extracted.domain, extracted.suffix)
+        # return '{}.{}'.format(extracted.domain, extracted.suffix)
+        return 'https://{}.{}/'.format(extracted.domain, extracted.suffix)
     except TypeError:
         return ''
 
