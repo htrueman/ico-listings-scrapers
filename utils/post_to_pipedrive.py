@@ -60,14 +60,15 @@ class PostToPipedrive:
                 next_start = i * self.pipedrive_orgs_step
                 pipedrive_orgs = requests.get(base_get_path.format(
                     start=next_start, get_summary=0))
-                for org_index, org in enumerate(pipedrive_orgs.json()['data']):
-                    if i == 0 and org_index == 0:
-                        item_pattern = '[\n{},\n'
-                    elif i + 1 == page_count and org_index + 1 == len(pipedrive_orgs.json()['data']):
-                        item_pattern = '{}\n]'
-                    else:
-                        item_pattern = '{},\n'
-                    f.write(item_pattern.format(json.dumps(org)))
+                if pipedrive_orgs.json()['data']:
+                    for org_index, org in enumerate(pipedrive_orgs.json()['data']):
+                        if i == 0 and org_index == 0:
+                            item_pattern = '[\n{},\n'
+                        elif i + 1 == page_count and org_index + 1 == len(pipedrive_orgs.json()['data']):
+                            item_pattern = '{}\n]'
+                        else:
+                            item_pattern = '{},\n'
+                        f.write(item_pattern.format(json.dumps(org)))
 
         print(orgs_file_name)
         ndo_file_name = MergeItems(orgs_file_name).organizations_file_name
@@ -105,10 +106,9 @@ class PostToPipedrive:
     #     return pipeline_id
 
     @staticmethod
-    def get_deal_pipeline(org):
+    def get_deal_pipeline(is_parsed):
         # 2-ico - API: id = 5
         # 3-ico - parsing: id = 6
-        is_parsed = org.pop('is_parsed')
         if is_parsed == 'true':
             pipeline_id = 6
         else:
@@ -119,6 +119,7 @@ class PostToPipedrive:
         for org_dict in self.orgs_json:
             # print(org_dict)
             pipedrive_org_dict = OrgFields(**org_dict).get_dict_with_pipedrive_api_field_names()
+            is_parsed = pipedrive_org_dict.pop('is_parsed')
             response = requests.post(
                 self.base_path.format(item_type_plural='organizations', extra_params=''),
                 json=pipedrive_org_dict)
@@ -128,7 +129,7 @@ class PostToPipedrive:
             pipedrive_deal_dict = {
                 'title': org_data['name'] + ' - deal',
                 'org_id': org_data['id'],
-                'pipeline_id': self.get_deal_pipeline(org_data)
+                'pipeline_id': self.get_deal_pipeline(is_parsed)
             }
             requests.post(self.base_path.format(item_type_plural='deals', extra_params=''),
                           json=pipedrive_deal_dict)
