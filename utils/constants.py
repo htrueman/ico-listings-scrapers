@@ -101,3 +101,5 @@ class OrgFields(PipedriveFieldsBase):
     tokens_for_sale = '7624affb4afec7c8566c446009d699ca3858349f'
     token_distribution = 'ef3fb9aabf598fd926241757d2a85cc552ba019d'
     source = 'cf662033f1de587af4073914c7f756bcdb47721f'
+
+    is_parsed = 'is_parsed'
