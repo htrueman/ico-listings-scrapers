@@ -4,7 +4,8 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import TakeFirst, MapCompose, Join, Compose
 
-from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format, clear_date, skip_date
+from crypto.utils import clear_text, unify_title, unify_website, strip, to_common_format, clear_date, skip_date, \
+    to_float
 from w3lib.html import remove_tags
 
 
@@ -153,42 +154,42 @@ class Organization(scrapy.Item):
     # rating
 
     # icobench
-    rating = default_field()
-    product_rating = default_field()
-    profile_rating = default_field()
-    team_rating = default_field()
-    vision_rating = default_field()
+    rating = default_field(extra=[to_float])
+    product_rating = default_field(extra=[to_float])
+    profile_rating = default_field(extra=[to_float])
+    team_rating = default_field(extra=[to_float])
+    vision_rating = default_field(extra=[to_float])
 
     # other
-    baseinfo_rating = default_field()
-    trackico_rating = default_field()
-    icomarks_rating = default_field()
+    baseinfo_rating = default_field(extra=[to_float])
+    trackico_rating = default_field(extra=[to_float])
+    icomarks_rating = default_field(extra=[to_float])
 
     # icobazaar
-    icobazaar_rating = default_field()
-    icobazaar_site_rating = default_field()
-    icobazaar_team_rating = default_field()
-    icobazaar_idea_rating = default_field()
-    icobazaar_tech_rating = default_field()
-    icobazaar_media_rating = default_field()
-    icobazaar_users_rating = default_field()
+    icobazaar_rating = default_field(extra=[to_float])
+    icobazaar_site_rating = default_field(extra=[to_float])
+    icobazaar_team_rating = default_field(extra=[to_float])
+    icobazaar_idea_rating = default_field(extra=[to_float])
+    icobazaar_tech_rating = default_field(extra=[to_float])
+    icobazaar_media_rating = default_field(extra=[to_float])
+    icobazaar_users_rating = default_field(extra=[to_float])
 
     # foundico
-    foundico_rating = default_field()
-    foundico_info_rating = default_field()
-    foundico_finance_rating = default_field()
-    foundico_product_rating = default_field()
-    foundico_team_rating = default_field()
-    foundico_marketing_rating = default_field()
+    foundico_rating = default_field(extra=[to_float])
+    foundico_info_rating = default_field(extra=[to_float])
+    foundico_finance_rating = default_field(extra=[to_float])
+    foundico_product_rating = default_field(extra=[to_float])
+    foundico_team_rating = default_field(extra=[to_float])
+    foundico_marketing_rating = default_field(extra=[to_float])
 
     # icoholder
-    icoholder_rating = default_field()
-    icoholder_profile_rating = default_field()
-    icoholder_team_rating = default_field()
-    icoholder_vision_rating = default_field()
-    icoholder_product_rating = default_field()
-    icoholder_potential_rating = default_field()
-    icoholder_activity_rating = default_field()
+    icoholder_rating = default_field(extra=[to_float])
+    icoholder_profile_rating = default_field(extra=[to_float])
+    icoholder_team_rating = default_field(extra=[to_float])
+    icoholder_vision_rating = default_field(extra=[to_float])
+    icoholder_product_rating = default_field(extra=[to_float])
+    icoholder_potential_rating = default_field(extra=[to_float])
+    icoholder_activity_rating = default_field(extra=[to_float])
 
 
 class BaseInfoOrganization(Organization):

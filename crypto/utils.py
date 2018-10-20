@@ -68,3 +68,7 @@ def to_common_format(date, original_formats):
         except ValueError:
             continue
     return ''
+
+
+def to_float(val):
+    return float(val) if val else val
