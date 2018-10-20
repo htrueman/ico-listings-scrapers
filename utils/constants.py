@@ -63,11 +63,6 @@ class OrgFields(PipedriveFieldsBase):
     ico_date_range_to = '41427adbb8512d496082c36587c0c1eec4b71a69_until'
     total_ico_date_range_from = 'b34181f68cae0ef102bd759f7f6f521574421009'
     total_ico_date_range_to = 'b34181f68cae0ef102bd759f7f6f521574421009_until'
-    ico_total_rating = 'd76d4c336cfbab7370427abba02d4a34f10adaac'
-    team_rating = 'bd01c4bf0f2f1d6656d6ea6249a8f744a9332a14'
-    vision_rating = 'bad5c31cbbcdc27b5cb26303107d98a726f0400c'
-    rating = 'ca80f495655efecb18bb631888702778b424dd8a'
-    profile_ration = '28a057442cb6c909834fee143db4f41cd572d88f'
     description = 'badfa76adf047269cf99ffa1df094c7516a32268'
     team_description = '43196c4b7b933bd1dbf4c8cacd19c524732cec85'
     token_price = '537f17eda9623f072d35c72d43a9cf2af8aa6929'
@@ -103,3 +98,41 @@ class OrgFields(PipedriveFieldsBase):
     source = 'cf662033f1de587af4073914c7f756bcdb47721f'
 
     is_parsed = 'is_parsed'
+
+    # icobench
+    rating = 'd76d4c336cfbab7370427abba02d4a34f10adaac'
+    team_rating = 'bd01c4bf0f2f1d6656d6ea6249a8f744a9332a14'
+    vision_rating = 'bad5c31cbbcdc27b5cb26303107d98a726f0400c'
+    product_rating = 'ca80f495655efecb18bb631888702778b424dd8a'
+    profile_rating = '28a057442cb6c909834fee143db4f41cd572d88f'
+
+    # other
+    baseinfo_rating = '252199566ec6285651698894272d94c3c34974ac'
+    trackico_rating = '30fec8ea09bdb46834ebba4f510be133d291f666'
+    icomarks_rating = 'b8dbd0ef45706ada07623917794c1f6a5be15899'
+
+    # icobazaar
+    icobazaar_rating = 'fdbf36f68ac474be51ae77bedabb133cef87a140'
+    icobazaar_site_rating = '2d92a3fed6d13fc2182a62f0456901624d0a9862'
+    icobazaar_team_rating = '527b56865623f0c3a411123c0c199ed74f7c5f5d'
+    icobazaar_idea_rating = '2309b1a9572204c1f4652b4b1a5fc6697b9267d5'
+    icobazaar_tech_rating = '2953f33ac7402bb9cf7cf9dd9f37bbbb29920a85'
+    icobazaar_media_rating = 'ee937c37929c27a2d50590ce8911efe19d9318dc'
+    icobazaar_users_rating = 'ba7218d31bf12d2fc5b8bddd786bd6d055567d0a'
+
+    # foundico
+    foundico_rating = 'fc09a5c4223ed19d4ed09a96d549a2698f5217f4'
+    foundico_info_rating = 'c6072eb35d66c1ca07da1618024b33631f39ebbe'
+    foundico_finance_rating = '71f5b41831fe6769354707dac166cd0deeaeff8c'
+    foundico_product_rating = 'f5c9cd8b0b67fdfff68dbd1a99445bfea7f97631'
+    foundico_team_rating = '75a497b652402ccdb46097f87f4947b151d994bf'
+    foundico_marketing_rating = '841256ed48a872366d327ea440ec2f281463a9f6'
+
+    # icoholder
+    icoholder_rating = '1737c0d02f3291dc0f38342ae3ee3fc52191b6a5'
+    icoholder_profile_rating = '6c9a4f772f06f130dac7b9292edb31801fc3b464'
+    icoholder_team_rating = 'a2a0ca122ac0bee88560ba2135a91c2f3c495284'
+    icoholder_vision_rating = 'f747330c23f1201c59307b2dbe08c8881a4ba033'
+    icoholder_product_rating = '243369f19dc023373324123aace28af1a523d01a'
+    icoholder_potential_rating = '4f0dd6bdfc06ef73774a08418c6435af7a99ec97'
+    icoholder_activity_rating = 'b190501d7182b215803dadf9081752caad02bb66'
