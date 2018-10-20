@@ -16,6 +16,7 @@ NEWSPIDER_MODULE = 'crypto.spiders'
 
 FEED_FORMAT = 'json'
 FEED_URI = 'output.json'
+FEED_API_URI = 'output_api.json'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

@@ -50,8 +50,8 @@ if __name__ == '__main__':
     crawl()
     reactor.run()
 
-    load_api(icomarks_main)
-    load_api(icobench_main)
+    # load_api(icomarks_main)
+    # load_api(icobench_main)
 
     repaire_file()
 
