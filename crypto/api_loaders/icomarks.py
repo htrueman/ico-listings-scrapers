@@ -83,7 +83,7 @@ def main():
                     loader.add_value(key, item['social'][k[0]])
 
         loader.add_value('hardcap', item['hard.cap'])
-        loader.add_value('rating', item['rating'])
+        loader.add_value('icomarks_rating', item['rating'])
         loader.add_value('number_of_tokens', item['total.tokens'])
         loader.add_value('raised_funds_usd_value', item['raised'])
         loader.add_value('softcap', item['soft.cap'])

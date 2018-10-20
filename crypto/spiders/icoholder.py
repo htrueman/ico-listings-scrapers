@@ -1,3 +1,6 @@
+import json
+
+import requests
 import scrapy
 
 from crypto.items import load_organization, IcoholderOrganization
@@ -47,6 +50,9 @@ XPATHS = {
     'TOKEN_NAME': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Ticker")]]/text()',
     'TOKEN_PRICE': '//div[contains(@class, "periods")]/div[@class="ico-list-row"][1]//div[@class="prices"]//div',
     'WHITELIST': '//div[contains(@class, "ico-more-info")]/*[div[contains(., "Whitelist")]]/text()',
+
+    # rating
+    'ICOHOLDER_RATING': '//div[@id="animate-rating"]/div/text()',
 }
 
 MAX_PAGE = 464
@@ -69,5 +75,31 @@ class IcoholderSpider(scrapy.Spider):
             yield response.follow(next_page, callback=self.parse_ico)
 
     def parse_ico(self, response):
-        return load_organization(response, XPATHS, context={'source': self.name}, item_cls=IcoholderOrganization)
+
+        ico_id = response.url.split('-')[-1]
+        res = requests.get('https://icoholder.com/en/get_rating/' + ico_id)
+        rating_dict = {}
+        keys_arr = [
+            'icoholder_profile_rating',
+            'icoholder_team_rating',
+            'icoholder_vision_rating',
+            'icoholder_product_rating',
+            'icoholder_potential_rating',
+            'icoholder_activity_rating'
+        ]
+        if res.status_code == 200:
+            res = json.loads(res.text)
+            try:
+                for dct in res:
+                    try:
+                        key = [key for key in keys_arr if dct['category'] in key][0]
+                        rating_dict[key] = dct['value']
+                    except KeyError:
+                        continue
+            except:
+                print(res)
+        return load_organization(response, XPATHS, context={
+            'source': self.name,
+            **rating_dict
+        }, item_cls=IcoholderOrganization)
 

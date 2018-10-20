@@ -11,7 +11,7 @@ XPATHS = {
     'SOCIAL_LINK': '//*[@class="single-ico-menu"]//li/a[contains(@href, "{href_contains}")]/@href',
 
     # statistics
-    'RATING': '//*[@class="rating-block"]//div[@class="rb-rate"]/text()',
+    'BASEINFO_RATING': '//*[@class="rating-block"]//div[@class="rb-rate"]/text()',
 
     # dates
     'ICO_DATE_RANGE_FROM': '//*[contains(@class, "icoContent__timeline")]'

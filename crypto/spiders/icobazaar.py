@@ -30,6 +30,21 @@ XPATHS = {
                    'div/div/div[span[contains(., "Price")]]/child::span[2]',
     'UPDATED': '//*[@id="ico-profile"]/div[1]/div[1]/div/div[2]/div/span/text()',
 
+    # rating
+    'ICOBAZAAR_RATING': '//*[@class="ico-rating__count"]/text()',
+    'ICOBAZAAR_SITE_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Site")]'
+                             '/div[@class="ico-rating-details__count"]/text()',
+    'ICOBAZAAR_TEAM_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Team")]'
+                             '/div[@class="ico-rating-details__count"]/text()',
+    'ICOBAZAAR_IDEA_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Idea")]'
+                             '/div[@class="ico-rating-details__count"]/text()',
+    'ICOBAZAAR_TECH_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Tech")]'
+                             '/div[@class="ico-rating-details__count"]/text()',
+    'ICOBAZAAR_MEDIA_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Media")]'
+                             '/div[@class="ico-rating-details__count"]/text()',
+    'ICOBAZAAR_USERS_RATING': '//*[@class="ico-rating-details"]//li[contains(., "Users")]'
+                              '/div[@class="ico-rating-details__count"]/text()',
+
 }
 
 MAX_PAGE = 31

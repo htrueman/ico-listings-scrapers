@@ -97,7 +97,6 @@ class Organization(scrapy.Item):
 
     # statistics
     hardcap = default_field()
-    rating = default_field()
     number_of_tokens = default_field()
     raised_funds_usd_value = default_field()
     raised_funds_usd_currency = default_field()
@@ -135,11 +134,8 @@ class Organization(scrapy.Item):
     # platform = default_field()
     # restricted_countries = default_field()
     # status = default_field()
-    product_rating = default_field()
-    profile_rating = default_field()
-    vision_rating = default_field()
+
     team_description = default_field()
-    team_rating = default_field()
     token_bonus_available = default_field()
     token_distribution = default_field()
     token_name = default_field()
@@ -153,6 +149,46 @@ class Organization(scrapy.Item):
 
     source = take_first_field()
     is_parsed = default_field()
+
+    # rating
+
+    # icobench
+    rating = default_field()
+    product_rating = default_field()
+    profile_rating = default_field()
+    team_rating = default_field()
+    vision_rating = default_field()
+
+    # other
+    baseinfo_rating = default_field()
+    trackico_rating = default_field()
+    icomarks_rating = default_field()
+
+    # icobazaar
+    icobazaar_rating = default_field()
+    icobazaar_site_rating = default_field()
+    icobazaar_team_rating = default_field()
+    icobazaar_idea_rating = default_field()
+    icobazaar_tech_rating = default_field()
+    icobazaar_media_rating = default_field()
+    icobazaar_users_rating = default_field()
+
+    # foundico
+    foundico_rating = default_field()
+    foundico_info_rating = default_field()
+    foundico_finance_rating = default_field()
+    foundico_product_rating = default_field()
+    foundico_team_rating = default_field()
+    foundico_marketing_rating = default_field()
+
+    # icoholder
+    icoholder_rating = default_field()
+    icoholder_profile_rating = default_field()
+    icoholder_team_rating = default_field()
+    icoholder_vision_rating = default_field()
+    icoholder_product_rating = default_field()
+    icoholder_potential_rating = default_field()
+    icoholder_activity_rating = default_field()
 
 
 class BaseInfoOrganization(Organization):

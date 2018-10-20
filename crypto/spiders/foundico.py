@@ -56,7 +56,15 @@ XPATHS = {
     # 'RESTRICTED_COUNTRIES': '//tr[./td[contains(., "Restricted areas")]]/child::td[3]/text()',
     'TOKEN_PRICE': '//tr[./td[contains(., "Token price")]]/child::td[3]/text()',
     'TOKENS_FOR_SALE': '//tr[./td[contains(., "Tokens for sale")]]/child::td[3]/text()',
-    'WHITELIST': '//tr[./td[contains(., "Whitelist of investors")]]/child::td[3]/text()'
+    'WHITELIST': '//tr[./td[contains(., "Whitelist of investors")]]/child::td[3]/text()',
+
+    # rating
+    'FOUNDICO_RATING': '//div[@class="fl-mrk-fin"]/span[@class="flmf-mark"]/text()',
+    'FOUNDICO_INFO_RATING': '//div[@id="fmt-information"]/div[@class="flmrk-mark"]//text()',
+    'FOUNDICO_FINANCE_RATING': '//div[@id="fmt-finance"]/div[@class="flmrk-mark"]//text()',
+    'FOUNDICO_PRODUCT_RATING': '//div[@id="fmt-product"]/div[@class="flmrk-mark"]//text()',
+    'FOUNDICO_TEAM_RATING': '//div[@id="fmt-team"]/div[@class="flmrk-mark"]//text()',
+    'FOUNDICO_MARKETING_RATING': '//div[@id="fmt-marketing"]/div[@class="flmrk-mark"]//text()',
 
 }
 

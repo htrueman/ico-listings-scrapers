@@ -15,7 +15,7 @@ XPATHS = {
 
     # statistics
     'HARDCAP': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Hard cap")]]/child::td[1]/text()',
-    'RATING': '//*[@class="main-container"]//div[footer[contains(., "rating")]]//strong/text()',
+    'TRACKICO_RATING': '//*[@class="main-container"]//div[footer[contains(., "rating")]]//strong/text()',
     'NUMBER_OF_TOKENS': '//*[@id="tab-financial"]//table'
                         '/tbody/tr[./th[contains(., "Token supply")]]/child::td[1]/text()',
     'SOFTCAP': '//*[@id="tab-financial"]//table/tbody/tr[./th[contains(., "Soft cap")]]/child::td[1]/text()',
