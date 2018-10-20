@@ -14,8 +14,9 @@ OUTPUT_FILE = settings['FEED_API_URI']
 open(OUTPUT_FILE, 'w').close()
 
 if __name__ == '__main__':
-    load_api(icomarks_main)
-    load_api(icobench_main)
+    while True:
+        load_api(icomarks_main)
+        load_api(icobench_main)
 
-    repaire_file()
-    PostToPipedrive(orgs_file_name=OUTPUT_FILE)
+        repaire_file()
+        PostToPipedrive(orgs_file_name=OUTPUT_FILE)

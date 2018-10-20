@@ -47,14 +47,15 @@ def repaire_file(output_file=OUTPUT_FILE):
 
 
 if __name__ == '__main__':
-    crawl()
-    reactor.run()
+    while True:
+        crawl()
+        reactor.run()
 
-    # load_api(icomarks_main)
-    # load_api(icobench_main)
+        # load_api(icomarks_main)
+        # load_api(icobench_main)
 
-    repaire_file()
+        repaire_file()
 
-    print('crawled')
+        print('crawled')
 
-    PostToPipedrive(orgs_file_name=OUTPUT_FILE)
+        PostToPipedrive(orgs_file_name=OUTPUT_FILE)
