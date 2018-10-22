@@ -8,6 +8,7 @@ import json
 import requests
 import time
 
+from pip._vendor.requests.exceptions import SSLError
 from scrapy.loader import ItemLoader
 
 from crypto.items import Organization, SOCIAL_LINK_BASES
@@ -40,8 +41,12 @@ def make_request(path, params):
     retries = 10
     for _ in range(retries):
         url = generate_url(path, params)
-        res = requests.get(url)
-        res_json = json.loads(res.content.decode())
+        try:
+            time.sleep(0.5)
+            res = requests.get(url)
+            res_json = json.loads(res.content.decode())
+        except SSLError:
+            continue
 
         if 'error' in res_json and res_json['error'] and res_json['error']['code'] != '485':
             time.sleep(1)
@@ -67,7 +72,6 @@ def main():
     lst = get_data()
     total = len(lst)
     for ind, i in enumerate(lst):
-        time.sleep(0.5)
         print('Icomarks: {} of {}'.format(ind, total))
         item = make_request(PATH1 + i['id'], {})
 
