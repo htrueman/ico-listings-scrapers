@@ -71,17 +71,20 @@ class PostToPipedrive:
                         f.write(item_pattern.format(json.dumps(org)))
 
         print(orgs_file_name)
+        self.orgs_path_gen = get_base_full_path(
+            self.base_path,
+            self.pipedrive_orgs_step,
+            'organizations'
+        )
+        self.deal_path_gen = get_base_full_path(
+            self.base_path,
+            self.pipedrive_orgs_step,
+            'deals'
+        )
         ndo_file_name = MergeItems(orgs_file_name).organizations_file_name
-        ndo_clean_file_name = RemoveDuplicateItems(
-            self.pipedrive_orgs_file_name, ndo_file_name).ndo_clean_file_name
-        self.orgs_json = json.loads(open(ndo_clean_file_name).read())
-
-        # deals_file_name = SpitDeals(ndo_clean_file_name).deals_file_name
-        # deals = tablib.Dataset().load(open(deals_file_name).read())
-        # self.deals_json = json.loads(deals.export('json'))
-
-        # members = tablib.Dataset().load(open(members_file_name).read())
-        # self.deals_json = json.loads(members.export('json'))
+        # ndo_clean_file_name = RemoveDuplicateItems(
+        #     self.pipedrive_orgs_file_name, ndo_file_name).ndo_clean_file_name
+        self.orgs_json = json.loads(open(ndo_file_name).read())
 
         self.main()
 
@@ -96,23 +99,40 @@ class PostToPipedrive:
         return pipeline_id
 
     def main(self):
+        pipedrive_orgs = []
+        for org_path in self.orgs_path_gen:
+            pipedrive_orgs.extend(requests.get(org_path).json()['data'])
+
         for org_dict in self.orgs_json:
-            # print(org_dict)
             pipedrive_org_dict = OrgFields(**org_dict).get_dict_with_pipedrive_api_field_names()
             is_parsed = pipedrive_org_dict.pop('is_parsed')
-            response = requests.post(
-                self.base_path.format(item_type_plural='organizations', extra_params=''),
-                json=pipedrive_org_dict)
 
-            org_data = response.json()['data']
+            exists = False
+            for pipedrive_org in pipedrive_orgs:
+                if pipedrive_org[getattr(OrgFields, 'name')] == pipedrive_org_dict[getattr(OrgFields, 'name')] \
+                        or pipedrive_org[getattr(OrgFields, 'site')] == pipedrive_org_dict[getattr(OrgFields, 'site')]:
+                    requests.put(
+                        self.base_path.format(
+                            item_type_plural='organizations/{}'.format(pipedrive_org['id']),
+                            extra_params=''),
+                        json=pipedrive_org_dict)
+                    exists = True
+                    break
 
-            pipedrive_deal_dict = {
-                'title': org_data['name'] + ' - deal',
-                'org_id': org_data['id'],
-                'pipeline_id': self.get_deal_pipeline(is_parsed)
-            }
-            requests.post(self.base_path.format(item_type_plural='deals', extra_params=''),
-                          json=pipedrive_deal_dict)
+            if not exists:
+                response = requests.post(
+                    self.base_path.format(item_type_plural='organizations', extra_params=''),
+                    json=pipedrive_org_dict)
+
+                org_data = response.json()['data']
+
+                pipedrive_deal_dict = {
+                    'title': org_data['name'] + ' - deal',
+                    'org_id': org_data['id'],
+                    'pipeline_id': self.get_deal_pipeline(is_parsed)
+                }
+                requests.post(self.base_path.format(item_type_plural='deals', extra_params=''),
+                              json=pipedrive_deal_dict)
         print('Done')
 
 
