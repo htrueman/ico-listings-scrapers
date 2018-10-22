@@ -67,6 +67,7 @@ def main():
     lst = get_data()
     total = len(lst)
     for ind, i in enumerate(lst):
+        time.sleep(0.5)
         print('Icomarks: {} of {}'.format(ind, total))
         item = make_request(PATH1 + i['id'], {})
 
