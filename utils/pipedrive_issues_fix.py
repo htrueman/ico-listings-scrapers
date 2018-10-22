@@ -2,7 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from utils.constants import OrgFields
+from utils.constants import OrgFields, API_SOURCES
 from utils.post_to_pipedrive import get_base_full_path
 
 
@@ -47,7 +47,6 @@ class PipedriveIssuesFix:
         self.delete_duplicate_orgs_and_deals()
 
     def delete_duplicate_orgs_and_deals(self):
-        API_SOURCES = ['icobench', 'icomarks']
         pipedrive_notes = []
         note_path_gen = get_base_full_path(
             self.base_path,

@@ -4,7 +4,7 @@ from math import ceil
 
 import requests
 
-from utils.constants import OrgFields
+from utils.constants import OrgFields, API_SOURCES
 from utils.merge_items import MergeItems
 from utils.remove_duplicates import RemoveDuplicateItems
 
@@ -92,7 +92,7 @@ class PostToPipedrive:
     def get_deal_pipeline(is_parsed):
         # 2-ico - API: id = 5
         # 3-ico - parsing: id = 6
-        if is_parsed == 'true':
+        if is_parsed:
             pipeline_id = 6
         else:
             pipeline_id = 5
@@ -105,12 +105,27 @@ class PostToPipedrive:
 
         for org_dict in self.orgs_json:
             pipedrive_org_dict = OrgFields(**org_dict).get_dict_with_pipedrive_api_field_names()
-            is_parsed = pipedrive_org_dict.pop('is_parsed')
+            is_parsed = json.loads(pipedrive_org_dict.pop('is_parsed'))
 
             exists = False
             for pipedrive_org in pipedrive_orgs:
                 if pipedrive_org[getattr(OrgFields, 'name')] == pipedrive_org_dict[getattr(OrgFields, 'name')] \
                         or pipedrive_org[getattr(OrgFields, 'site')] == pipedrive_org_dict[getattr(OrgFields, 'site')]:
+                    if pipedrive_org[getattr(OrgFields, 'source')] in API_SOURCES:
+                        pipedrive_org_dict.update(
+                            {k: v for k, v in pipedrive_org.items()}
+                        )
+                        is_parsed = False
+                    elif pipedrive_org_dict[getattr(OrgFields, 'source')] in API_SOURCES:
+                        pipedrive_org.update(
+                            {k: v for k, v in pipedrive_org_dict.items()}
+                        )
+                        is_parsed = False
+                    else:
+                        pipedrive_org_dict.update(
+                            {k: v for k, v in pipedrive_org_dict.items()
+                             if len(v) > len(pipedrive_org_dict[k])}
+                        )
                     requests.put(
                         self.base_path.format(
                             item_type_plural='organizations/{}'.format(pipedrive_org['id']),

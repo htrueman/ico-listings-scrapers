@@ -1,3 +1,6 @@
+API_SOURCES = ['icobench', 'icomarks']
+
+
 class PipedriveFieldsBase:
     def __init__(self, *args, **kwargs):
         self.return_dict = {
