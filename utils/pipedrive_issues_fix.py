@@ -64,7 +64,7 @@ class PipedriveIssuesFix:
             print(org_path)
             pipedrive_orgs.extend(requests.get(org_path).json()['data'])
 
-        for org1 in pipedrive_orgs:
+        for index, org1 in enumerate(pipedrive_orgs):
             for org2 in pipedrive_orgs:
                 if org1['id'] != org2['id'] \
                         and org1['owner_name'] == 'Vadym Hevlich' and org2['owner_name'] == 'Vadym Hevlich' and (
@@ -99,13 +99,11 @@ class PipedriveIssuesFix:
                                     deal_to_delete_id = deal1['id']
 
                                 if deal_to_delete_id:
-                                    r = self.session.delete(
+                                    self.session.delete(
                                         self.base_put_path.format(
                                             item_type_plural='deals',
                                             id=deal_to_delete_id)
                                     )
-                                    print(r.json())
-                                    print('deals:', deal1['id'], deal2['id'], deal1['title'])
 
                     # delete duplicate orgs, left one parsed from API
                     org_to_delete_id = None
@@ -115,13 +113,12 @@ class PipedriveIssuesFix:
                         org_to_delete_id = id1
 
                     if org_to_delete_id:
-                        r = self.session.delete(
+                        self.session.delete(
                             self.base_put_path.format(
                                 item_type_plural='organizations',
                                 id=org_to_delete_id)
                         )
-                        print(r.json())
-                        print('orgs:', id1, id2, org1[getattr(OrgFields, 'name')])
+                        print('orgs:', '{}/{}'.format(index, len(pipedrive_orgs)))
 
     def move_address_field_to_site_field(self):
         # organization
