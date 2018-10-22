@@ -43,8 +43,8 @@ class PostToPipedrive:
     pipedrive_orgs_file_name = 'pipedrive_orgs.json'
 
     def __init__(self,
-         orgs_file_name=None,
-         members_file_name=None):
+                 orgs_file_name=None,
+                 members_file_name=None):
 
         base_get_path = self.base_path.format(
             item_type_plural='organizations',
@@ -84,26 +84,6 @@ class PostToPipedrive:
         # self.deals_json = json.loads(members.export('json'))
 
         self.main()
-
-    # @staticmethod
-    # def get_deal_pipeline(org):
-    #     """
-    #     Get deal pipeline by organization ICO date.
-    #     All deals are splitted between '2-ico-in-progress' and '3-ico-finished' pipelines.
-    #     """
-    #     # 3-ico-finished : id = 3
-    #     # 2-ico-in-progress : id = 1
-    #
-    #     ico_date_range_to = org.get(getattr(OrgFields, 'ico_date_range_to'))
-    #     total_ico_date_range_to = org.get(getattr(OrgFields, 'total_ico_date_range_to'))
-    #     pre_ico_date_range_to = org.get(getattr(OrgFields, 'pre_ico_date_range_to'))
-    #
-    #     pipeline_id = 3
-    #     for date_str in [ico_date_range_to, total_ico_date_range_to, pre_ico_date_range_to]:
-    #         if date_str:
-    #             if datetime.datetime.strptime(date_str, '%Y-%m-%d') <= datetime.datetime.now():
-    #                 pipeline_id = 1
-    #     return pipeline_id
 
     @staticmethod
     def get_deal_pipeline(is_parsed):
