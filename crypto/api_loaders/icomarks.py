@@ -8,7 +8,6 @@ import json
 import requests
 import time
 
-from pip._vendor.requests.exceptions import SSLError
 from scrapy.loader import ItemLoader
 
 from crypto.items import Organization, SOCIAL_LINK_BASES
@@ -45,7 +44,7 @@ def make_request(path, params):
             time.sleep(0.5)
             res = requests.get(url)
             res_json = json.loads(res.content.decode())
-        except SSLError:
+        except Exception:
             continue
 
         if 'error' in res_json and res_json['error'] and res_json['error']['code'] != '485':
