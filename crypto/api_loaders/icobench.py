@@ -55,9 +55,9 @@ def main():
     data = []
     for i, item in enumerate(output):
         print('Icobench {}/{}'.format(i, total))
-        ico = make_request(PATH_PROFILE + str(item['id']))
-
         try:
+            ico = make_request(PATH_PROFILE + str(item['id']))
+
             loader = ItemLoader(item=IcobenchOrganization())
             loader.add_value('name', unify_title(ico['name']))
             loader.add_value('site', unify_website(ico['links']['www']))
