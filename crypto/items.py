@@ -251,6 +251,8 @@ class FoundicoOrganization(Organization):
     total_ico_date_range_from = default_field_join(extra=[date_processor])
     total_ico_date_range_to = default_field_join(extra=[date_processor])
 
+    whitepaper = default_field(extra=[lambda link: 'https://foundico.com' + link])
+
 
 class IcobenchOrganization(Organization):
     original_formats = ['%Y-%m-%d %H:%M:%S']
