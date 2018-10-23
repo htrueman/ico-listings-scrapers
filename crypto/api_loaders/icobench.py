@@ -57,54 +57,57 @@ def main():
         print('Icobench {}/{}'.format(i, total))
         ico = make_request(PATH_PROFILE + str(item['id']))
 
-        loader = ItemLoader(item=IcobenchOrganization())
-        loader.add_value('name', unify_title(ico['name']))
-        loader.add_value('site', unify_website(ico['links']['www']))
-        loader.add_value('country', ico['country'])
-        loader.add_value('whitepaper', ico['links']['whitepaper'])
+        try:
+            loader = ItemLoader(item=IcobenchOrganization())
+            loader.add_value('name', unify_title(ico['name']))
+            loader.add_value('site', unify_website(ico['links']['www']))
+            loader.add_value('country', ico['country'])
+            loader.add_value('whitepaper', ico['links']['whitepaper'])
 
-        for key, value in SOCIAL_LINK_BASES.items():
-            if ico['links']:
-                k = [k for k in ico['links'].keys() if ico['links'][k] and value in ico['links'][k]]
-                if len(k) == 1:
-                    loader.add_value(key, ico['links'][k[0]])
+            for key, value in SOCIAL_LINK_BASES.items():
+                if ico['links']:
+                    k = [k for k in ico['links'].keys() if ico['links'][k] and value in ico['links'][k]]
+                    if len(k) == 1:
+                        loader.add_value(key, ico['links'][k[0]])
 
-        finance = ico['finance']
-        loader.add_value('hardcap', finance['hardcap'])
-        loader.add_value('softcap', finance['softcap'])
-        loader.add_value('rating', ico['rating'])
-        loader.add_value('number_of_tokens', finance['tokens'])
-        loader.add_value('raised_funds_usd_value', finance['raised'])
+            finance = ico['finance']
+            loader.add_value('hardcap', finance['hardcap'])
+            loader.add_value('softcap', finance['softcap'])
+            loader.add_value('rating', ico['rating'])
+            loader.add_value('number_of_tokens', finance['tokens'])
+            loader.add_value('raised_funds_usd_value', finance['raised'])
 
-        dates = ico['dates']
-        loader.add_value('pre_ico_date_range_from', dates['preIcoStart'])
-        loader.add_value('pre_ico_date_range_to', dates['preIcoEnd'])
-        loader.add_value('ico_date_range_from', dates['icoStart'])
-        loader.add_value('ico_date_range_to', dates['icoEnd'])
-        loader.add_value(
-            'total_ico_date_range_from',
-            dates['preIcoStart'] if dates['preIcoStart'] != DEFAULT_DATE else dates['icoStart']
-        )
-        loader.add_value(
-            'total_ico_date_range_to',
-            dates['icoEnd'] if dates['icoEnd'] != DEFAULT_DATE else dates['preIcoEnd']
-        )
+            dates = ico['dates']
+            loader.add_value('pre_ico_date_range_from', dates['preIcoStart'])
+            loader.add_value('pre_ico_date_range_to', dates['preIcoEnd'])
+            loader.add_value('ico_date_range_from', dates['icoStart'])
+            loader.add_value('ico_date_range_to', dates['icoEnd'])
+            loader.add_value(
+                'total_ico_date_range_from',
+                dates['preIcoStart'] if dates['preIcoStart'] != DEFAULT_DATE else dates['icoStart']
+            )
+            loader.add_value(
+                'total_ico_date_range_to',
+                dates['icoEnd'] if dates['icoEnd'] != DEFAULT_DATE else dates['preIcoEnd']
+            )
 
-        loader.add_value('accepting', finance['accepting'])
-        loader.add_value('bonus', finance['bonus'])
-        loader.add_value('description', ico['tagline'] + '. ' + ico['intro'])
-        loader.add_value('team_description', ico['teamIntro'])
-        loader.add_value('team_rating', ico['ratingTeam'])
-        loader.add_value('product_rating', ico['ratingProduct'])
-        loader.add_value('profile_rating', ico['ratingProfile'])
-        loader.add_value('vision_rating', ico['ratingVision'])
-        loader.add_value('token_name', finance['token'])
-        loader.add_value('token_price', finance['price'])
+            loader.add_value('accepting', finance['accepting'])
+            loader.add_value('bonus', finance['bonus'])
+            loader.add_value('description', ico['tagline'] + '. ' + ico['intro'])
+            loader.add_value('team_description', ico['teamIntro'])
+            loader.add_value('team_rating', ico['ratingTeam'])
+            loader.add_value('product_rating', ico['ratingProduct'])
+            loader.add_value('profile_rating', ico['ratingProfile'])
+            loader.add_value('vision_rating', ico['ratingVision'])
+            loader.add_value('token_name', finance['token'])
+            loader.add_value('token_price', finance['price'])
 
-        loader.add_value('source', 'icobench')
-        loader.add_value('is_parsed', 'false')
+            loader.add_value('source', 'icobench')
+            loader.add_value('is_parsed', 'false')
 
-        data.append(loader.load_item())
+            data.append(loader.load_item())
+        except Exception as e:
+            print(e)
 
     return data
 
