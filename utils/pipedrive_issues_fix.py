@@ -2,7 +2,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
-from utils.constants import OrgFields
+from utils.constants import OrgFields, API_SOURCES
 from utils.post_to_pipedrive import get_base_full_path
 
 
@@ -47,7 +47,6 @@ class PipedriveIssuesFix:
         self.delete_duplicate_orgs_and_deals()
 
     def delete_duplicate_orgs_and_deals(self):
-        API_SOURCES = ['icobench', 'icomarks']
         pipedrive_notes = []
         note_path_gen = get_base_full_path(
             self.base_path,
@@ -64,10 +63,10 @@ class PipedriveIssuesFix:
             print(org_path)
             pipedrive_orgs.extend(requests.get(org_path).json()['data'])
 
-        for org1 in pipedrive_orgs:
+        for index, org1 in enumerate(pipedrive_orgs):
             for org2 in pipedrive_orgs:
                 if org1['id'] != org2['id'] \
-                        and org1['owner_name'] == 'Vadym Hevlich' and org2['owner_name'] == 'Vadym Hevlich' and(
+                        and org1['owner_name'] == 'Vadym Hevlich' and org2['owner_name'] == 'Vadym Hevlich' and (
                         org1[getattr(OrgFields, 'name')] == org2[getattr(OrgFields, 'name')]
                         or org1[getattr(OrgFields, 'site')] == org2[getattr(OrgFields, 'site')]):
                     id1 = org1['id']
@@ -92,24 +91,33 @@ class PipedriveIssuesFix:
                         for deal1, deal2 in zip(org1_deals, org2_deals):
                             # delete duplicate deals, left one parsed from API
                             if deal1['id'] != deal2['id']:
+                                deal_to_delete_id = None
                                 if deal2['id'] not in deal_ids_to_not_delete:
-                                    r = self.session.delete(
+                                    deal_to_delete_id = deal2['id']
+                                elif deal1['id'] not in deal_ids_to_not_delete:
+                                    deal_to_delete_id = deal1['id']
+
+                                if deal_to_delete_id:
+                                    self.session.delete(
                                         self.base_put_path.format(
                                             item_type_plural='deals',
-                                            id=deal2['id'])
+                                            id=deal_to_delete_id)
                                     )
-                                    print(r.json())
-                                    print('deals:', deal1['id'], deal2['id'], deal1['title'])
 
                     # delete duplicate orgs, left one parsed from API
+                    org_to_delete_id = None
                     if id2 not in org_ids_to_not_delete:
-                        r = self.session.delete(
+                        org_to_delete_id = id2
+                    elif id1 not in org_ids_to_not_delete:
+                        org_to_delete_id = id1
+
+                    if org_to_delete_id:
+                        self.session.delete(
                             self.base_put_path.format(
                                 item_type_plural='organizations',
-                                id=id2)
+                                id=org_to_delete_id)
                         )
-                        print(r.json())
-                        print('orgs:', id1, id2, org1[getattr(OrgFields, 'name')])
+                        print('orgs:', '{}/{}'.format(index, len(pipedrive_orgs)))
 
     def move_address_field_to_site_field(self):
         # organization

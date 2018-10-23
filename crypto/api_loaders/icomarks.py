@@ -40,8 +40,12 @@ def make_request(path, params):
     retries = 10
     for _ in range(retries):
         url = generate_url(path, params)
-        res = requests.get(url)
-        res_json = json.loads(res.content.decode())
+        try:
+            time.sleep(0.5)
+            res = requests.get(url)
+            res_json = json.loads(res.content.decode())
+        except Exception:
+            continue
 
         if 'error' in res_json and res_json['error'] and res_json['error']['code'] != '485':
             time.sleep(1)
