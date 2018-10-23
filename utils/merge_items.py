@@ -1,13 +1,15 @@
 import json
 import sys
 
+import tablib
+
 from utils.constants import OrgFields
 
 
 class MergeItems:
     def __init__(self, imported_orgs_file_name=None, *args, **kwargs):
 
-        self.imported_organizations = json.loads(open(imported_orgs_file_name).read())
+        self.imported_organizations = tablib.Dataset(json.loads(open(imported_orgs_file_name).read()))
         self.organizations_file_name = 'non_duplicate_{}'.format(imported_orgs_file_name)
 
         self.ndo_content = []
