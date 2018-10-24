@@ -109,9 +109,10 @@ class PostToPipedrive:
 
             exists = False
             for pipedrive_org in pipedrive_orgs:
-                print(pipedrive_org, pipedrive_org_dict)
-                if pipedrive_org[getattr(OrgFields, 'name')] == pipedrive_org_dict[getattr(OrgFields, 'name')] \
-                        or pipedrive_org[getattr(OrgFields, 'site')] == pipedrive_org_dict[getattr(OrgFields, 'site')]:
+                if pipedrive_org.get(getattr(OrgFields, 'name')) \
+                        == pipedrive_org_dict.get(getattr(OrgFields, 'name')) \
+                        or pipedrive_org.get(getattr(OrgFields, 'site')) \
+                        == pipedrive_org_dict.get(getattr(OrgFields, 'site')):
                     if pipedrive_org[getattr(OrgFields, 'source')] in API_SOURCES:
                         pipedrive_org_dict.update(
                             {k: v for k, v in pipedrive_org.items()}
