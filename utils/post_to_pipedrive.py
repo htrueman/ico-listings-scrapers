@@ -109,6 +109,7 @@ class PostToPipedrive:
 
             exists = False
             for pipedrive_org in pipedrive_orgs:
+
                 if pipedrive_org.get(getattr(OrgFields, 'name')) \
                         == pipedrive_org_dict.get(getattr(OrgFields, 'name')) \
                         or pipedrive_org.get(getattr(OrgFields, 'site')) \
@@ -141,15 +142,16 @@ class PostToPipedrive:
                     self.base_path.format(item_type_plural='organizations', extra_params=''),
                     json=pipedrive_org_dict)
 
-                org_data = response.json()['data']
+                if response.status_code == 200:
+                    org_data = response.json()['data']
 
-                pipedrive_deal_dict = {
-                    'title': org_data['name'] + ' - deal',
-                    'org_id': org_data['id'],
-                    'pipeline_id': self.get_deal_pipeline(is_parsed)
-                }
-                requests.post(self.base_path.format(item_type_plural='deals', extra_params=''),
-                              json=pipedrive_deal_dict)
+                    pipedrive_deal_dict = {
+                        'title': org_data['name'] + ' - deal',
+                        'org_id': org_data['id'],
+                        'pipeline_id': self.get_deal_pipeline(is_parsed)
+                    }
+                    requests.post(self.base_path.format(item_type_plural='deals', extra_params=''),
+                                  json=pipedrive_deal_dict)
         print('Done')
 
 
