@@ -44,3 +44,4 @@ if __name__ == '__main__':
 
         PostToPipedrive(orgs_file_name=OUTPUT_FILE)
         open(OUTPUT_FILE, 'w').close()
+        reactor.stop()
